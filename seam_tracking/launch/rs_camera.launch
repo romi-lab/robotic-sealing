@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <!-- realsense -->
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    <arg name="depth_width"   value="640"/>
+    <arg name="depth_height"  value="480"/>
+    <arg name="enable_pointcloud"  value="true"/>
+    <arg name="enable_sync"  value="true"/>
+    <arg name="align_depth"  value="true"/>
+  </include>
+
+  <!-- pc realsense -->
+  <node type="rviz" name="rviz" pkg="rviz" args="-d /home/maggie/ros/rviz_config/realsense.rviz" />
+
+
+</launch>

@@ -1,0 +1,115 @@
+<?xml version="1.0" ?>
+<robot name="sealing_robot" xmlns:xacro="http://wiki.ros.org/xacro">
+  <!-- <xacro:property name="pi" value="3.1415926535897931" /> -->
+
+  <xacro:include filename="$(find ur_description)/urdf/ur5.urdf.xacro" />
+  <xacro:ur5_robot prefix="" joint_limited="true"/>
+
+<link name="world"/>
+
+  <joint name="world_to_robot" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0.0 0.0 0"/>
+  </joint>
+
+  <link name="table">
+    <visual>
+      <geometry>
+        <box size="1.5 1.5 0.02"/>
+      </geometry>
+      <material name="Wooden">
+        <color rgba="1.0 0.981 0.75 0.8"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="1.5 1.5 0.02"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="base_link_to_table" type="fixed">
+    <parent link="base_link"/>
+    <child link="table"/>
+    <origin xyz="0 0.4 -0.01" rpy="0 0 0"/>
+  </joint>
+
+  <link name="sealing_gun">
+    <visual>
+      <geometry>
+        <mesh filename="package://robot_scene_description/meshes/collision/sealing_mounting.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+    <material name="sealing_gun">
+      <color rgba="0.8 0.8 0.8 1.0"/>
+    </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://robot_scene_description/meshes/collision/sealing_mounting.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+<joint name="sealing_gun_to_tool0" type="fixed">
+  <parent link="tool0"/>
+  <child link="sealing_gun"/>
+  <!-- <origin xyz="0.00518 0.01107 0.10525" rpy="0 0 ${pi}"/> -->
+  <origin xyz="0.1478 0.033 -0.11525" rpy="0 0 ${pi}"/>
+</joint> 
+
+  <!-- <link name="post">
+    <visual>
+      <geometry>
+        <box size="0.05 0.05 1.5"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.05 1.5"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="table_to_post" type="fixed">
+    <parent link="table"/>
+    <child link="post"/>
+    <origin xyz="0 -0.725 0.5" rpy="0 0 0"/>
+  </joint>
+
+
+  <link name="bar">
+    <visual>
+      <geometry>
+        <box size="0.6 0.05 0.05"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.6 0.05 0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="post_to_bar" type="fixed">
+    <parent link="post"/>
+    <child link="bar"/>
+    <origin xyz="0 0.33 0.7785" rpy="0 0 -1.5708"/>
+  </joint> -->
+
+
+  <!-- <link name="kinect2_rgb_optical_frame"/>
+  <joint name="rgb_optical_frame" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="kinect2_link"/>
+    <child link="kinect2_rgb_optical_frame"/>
+  </joint>
+
+  <joint name="world_to_camera" type="fixed">
+    <parent link="world"/>
+    <child link="kinect2_link"/>
+    <origin xyz="0.1 0.43 1.2" rpy="0 3.14159 3.14159"/>
+  </joint> -->
+
+</robot>
+
+

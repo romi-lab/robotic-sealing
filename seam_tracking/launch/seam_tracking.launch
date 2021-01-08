@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!--
+seam_tracking
+1.open_camera
+2.process img
+3.feedback control
+--> 
+<launch>
+
+  <!-- logitech -->
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="1280" />
+    <param name="image_height" value="720" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="usb_cam" />
+    <param name="io_method" value="mmap"/>
+  </node>
+
+  <!-- realsense -->
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    <arg name="depth_width"   value="640"/>
+    <arg name="depth_height"  value="480"/>
+    <arg name="enable_pointcloud"  value="true"/>
+    <arg name="enable_sync"  value="true"/>
+    <arg name="align_depth"  value="true"/>
+
+  </include>
+
+  <!-- pc realsense -->
+  <node type="rviz" name="rviz" pkg="rviz" args="-d /home/maggie/ros/rviz_config/realsense.rviz" />
+  
+  <!-- process realsense -->
+  <node name="rs_rgb_processing" pkg="seam_tracking" type="rs_rgb_processing.py" />
+
+  <!-- process logitech -->
+  <node name="logi_img_processing" pkg="seam_tracking" type="logi_img_processing.py" />
+
+  <!-- motion control -->
+  <node name="img_feedback_control" pkg="seam_tracking" type="motion_control.py" />
+
+  <!-- rqt for process visualization -->
+  <node name="rqt_gui" pkg="rqt_gui" type="rqt_gui"/>
+
+
+</launch>
