@@ -50,7 +50,7 @@ def main(args):
 
         rob.movej(p1, acc=0.1, vel=0.2, wait=True)
         rob.movej(p2, acc=0.1, vel=0.2, wait=True)
-        rob.movel(p3, acc=0.2, vel=0.02, wait=True)
+        rob.movel(p3, acc=0.02, vel=0.002, wait=True)
 
         rob.translate_tool((0, 0, -0.08), vel=0.1, acc=0.1, wait=True)
     #     time.sleep(12)

@@ -130,11 +130,11 @@ class image_converter:
             cv2.waitKey(1)
         
 
-        if reach_first_pose:
-            image_processor(opencv_image)
-        else:
-            self.image_pub.publish(Image)
-        # image_processor(opencv_image)
+        # if reach_first_pose:
+        #     image_processor(opencv_image)
+        # else:
+        #     self.image_pub.publish(Image)
+        image_processor(opencv_image)
 
 
 def process_pre_roi(limg, tip_pos):
@@ -161,7 +161,7 @@ def process_pre_roi(limg, tip_pos):
     # left_rectangle_height = 60
     left_rectangle_height = 60
     left_rectangle_width = 200
-    # cv2.rectangle(frame,(left_rectangle_center[0]- left_rectangle_width,left_rectangle_center[1]- left_rectangle_height),(left_rectangle_center[0]+ left_rectangle_width,left_rectangle_center[1]+ left_rectangle_height),(255,255,255),1)
+    cv2.rectangle(frame,(left_rectangle_center[0]- left_rectangle_width,left_rectangle_center[1]- left_rectangle_height),(left_rectangle_center[0]+ left_rectangle_width,left_rectangle_center[1]+ left_rectangle_height),(255,255,255),1)
 
     # 2. process left image
     # 2a. define left ROI

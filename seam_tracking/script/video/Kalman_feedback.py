@@ -20,8 +20,6 @@ from scipy.spatial.transform import Rotation as R
 from filterpy.kalman import predict, update
 from filterpy.kalman import KalmanFilter
 from filterpy.common import Q_discrete_white_noise
-from kf_book.mkf_internal import plot_track
-import kf_book.book_plots as book_plots
 from numpy.random import randn
 
 
@@ -188,15 +186,42 @@ class motion_controller:
     
     def callback_logi_info_pre_roi(self, Point):
 
-        global logi_pre
+        global logi_pre, z_list, xs_list, cov_list, kf
 
-        # print("received measured error")
+        print("received measured error")
         
-        logi_pre_k = Point.x
-        logi_pre_b = Point.y
+        logi_pre_angle = Point.x
+        logi_pre_reserve = Point.y
         logi_pre_d = Point.z
 
-        logi_pre = [logi_pre_k, logi_pre_b, logi_pre_d]
+        logi_pre = [logi_pre_angle, logi_pre_reserve, logi_pre_d]
+        
+        # run the kalman filter and store the results
+        kf.predict()
+        kf.update(logi_pre[-1])
+        xs_list.append(kf.x)
+        cov_list.append(kf.P)
+        z_list.append(logi_pre[-1])
+
+        # do_plot = True
+        # if do_plot:
+        #     plot_track(np.array(xs_list)[:, 0], np.array(z_list), np.array(cov_list))
+
+        x = range(np.array(z_list).shape[0])
+        plt.ion()
+        plt.show()
+        plt.cla()
+        
+        plt.plot(x, np.array(xs_list)[:, 0], color='r', linewidth=0.5, label='kf')
+        plt.plot(x, np.array(z_list), color='k', linewidth=0.5, label='measure')
+
+        plt.tight_layout()
+        plt.autoscale(enable=True)
+        plt.legend()
+
+        plt.draw()
+        plt.pause(0.001)
+
 
     def callback_logi_image(self, Image):
 
@@ -204,6 +229,29 @@ class motion_controller:
             opencv_image = self.bridge.imgmsg_to_cv2(Image, "bgr8")
         except CvBridgeError as e:
             print(e)
+
+        # def display_info_on_image(tip_height):
+        #     """
+        #     Dispaly useful information
+        #     """
+
+        #     global frame
+        #     font = cv2.FONT_HERSHEY_SIMPLEX
+        #     i_in = 580
+        #     b_in = 30
+        #     s_in = 30
+        #     left = 50
+        #     left_offset=20
+        #     upper_offset = 7
+        #     font_size = 1
+        #     font_thickness = 2
+
+        #     cv2.circle(frame, (left-left_offset,i_in+b_in-upper_offset), radius=14, color=(0, 255, 0), thickness=2)
+        #     cv2.putText(frame,' target position',(left,i_in+b_in), font, font_size,(0,255,0),font_thickness)
+
+        #     cv2.circle(frame, (left-left_offset,i_in+2*b_in+s_in-upper_offset), radius=14, color=(0, 255, 255), thickness=2)
+        #     cv2.putText(frame,' measured position',(left,i_in+2*b_in+s_in), font, font_size,(0,255,255),font_thickness)
+
 
         def image_processor(opencv_image):
 
@@ -215,8 +263,6 @@ class motion_controller:
             (rows, cols, channels) = frame.shape
             height = rows # 720
             width = cols #1280
-
-            limg = copy.deepcopy(frame)
 
             tip_width = int(width*75/160)
             tip_height = int(24/64*height) #240
@@ -255,41 +301,6 @@ def pos_vel_filter(x, P, R, Q=0., dt=1.0):
         kf.Q[:] = Q
     return kf
 
-dt = .1
-x = np.array([0., 0.]) 
-kf = pos_vel_filter(x, P=500, R=5, Q=0.1, dt=dt)
-
-def run(x0=(0.,0.), P=500, R=0, Q=0, dt=1.0, 
-        track=None, zs=None,
-        count=0, do_plot=True, **kwargs):
-    """
-    track is the actual position of the dog, zs are the 
-    corresponding measurements. 
-    """
-
-    # Simulate dog if no data provided. 
-    if zs is None:
-        track, zs = compute_dog_data(R, Q, count)
-
-    # create the Kalman filter
-    kf = pos_vel_filter(x0, R=R, P=P, Q=Q, dt=dt)  
-
-    # run the kalman filter and store the results
-    xs, cov = [], []
-    for z in zs:
-        kf.predict()
-        kf.update(z)
-        xs.append(kf.x)
-        cov.append(kf.P)
-
-    xs, cov = np.array(xs), np.array(cov)
-    if do_plot:
-        plot_track(xs[:, 0], track, zs, cov, **kwargs)
-    return xs, cov
-
-P = np.diag([500., 49.])
-Ms, Ps = run(count=50, R=10, Q=0.01, P=P)
-
 def normalise_vel(vel_vec):
 
     sum = abs(vel_vec[0])+abs(vel_vec[1])+abs(vel_vec[2])
@@ -326,9 +337,16 @@ def uplift_z(ur_pose):
 # --------------- MAIN LOOP
 def main(args):
 
-    global logi_pre
+    global logi_pre, z_list, xs_list, cov_list, kf
     logi_pre = []
-    z = []
+    z_list = []
+    xs_list, cov_list = [], []
+
+    dt = .1
+    x0 = np.array([0., 0.])  # p = 0, v=0
+    P = np.diag([100., 1])
+    R = 81
+    kf = pos_vel_filter(x0, P=P, R=R, Q=100, dt=dt)
 
     logging.basicConfig(level=logging.INFO)
 

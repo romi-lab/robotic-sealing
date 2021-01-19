@@ -848,7 +848,7 @@ if __name__ == "__main__":
                 markerArray = MarkerArray()
                 PoseList_tip_rviz = PoseArray()
 
-                ur_poses = detect_groove_workflow(received_open3d_cloud, T_end_effector_wrt_base.array, detect_feature="asymmetry", show_groove=False)
+                ur_poses = detect_groove_withTemp(received_open3d_cloud, T_end_effector_wrt_base.array, detect_feature="asymmetry", show_groove=False)
                 
                 rospy.loginfo("-- Finish display. ...\n")
     robot.stop()
