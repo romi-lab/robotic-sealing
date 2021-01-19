@@ -611,8 +611,8 @@ def detect_groove_withTemp(pcd, transfromation_end_to_base, detect_feature="asym
     global max_dis, total_time, voxel_size, delete_percentage
     original_pcd = pcd
 
-    voxel_size = 0.004
-    pcd = pcd.voxel_down_sample(voxel_size=voxel_size)
+    # voxel_size = 0.003
+    # pcd = pcd.voxel_down_sample(voxel_size=voxel_size)
 
     # delete points along z axis in TCP.
     pcd_points = np.asarray(pcd.points)
@@ -631,8 +631,11 @@ def detect_groove_withTemp(pcd, transfromation_end_to_base, detect_feature="asym
     # ----------------------- Generate Groove ----------------------------------
 
     cube_temp = o3d.io.read_point_cloud(config.temp['tcube']['path'])
+   
     cube_label_lst = config.temp['tcube']['label']
+ 
     points_labeled_trans = MapTemp(pcd, cube_temp, cube_label_lst)
+    print(points_labeled_trans)
     p1 = points_labeled_trans[0]
     p2 = points_labeled_trans[1]
     p3 = points_labeled_trans[2]
@@ -641,11 +644,11 @@ def detect_groove_withTemp(pcd, transfromation_end_to_base, detect_feature="asym
     groove2 = points_in_cylinder(p2, p3, r, np.asarray(pcd.points))
     grooves = groove1.extend(groove2)
 
+    pc_number = len(grooves)
+    rospy.loginfo("Total number of pc {}".format(pc_number))
+
     rviz_cloud = convertCloudFromOpen3dToRos(grooves, frame_id="base")
     pub_pc.publish(rviz_cloud)
-
-    pc_number = np.asarray(grooves.points).shape[0]
-    rospy.loginfo("Total number of pc {}".format(pc_number))
 
     # ------------------------ Output Groove   ---------------------------------
     groove_t = time.time()
@@ -716,14 +719,15 @@ def MapTemp(pcd, temp, label_idx_lst, log_flag = False):
     :return: lines
     """
     # ICP process
-    threshold = 0.008
+    threshold = 0.001
     trans_init = np.asarray([[1, 0., 0, 0],
                              [0, 1., 0, 0],
                              [0, 0., 1, 0],
                              [0, 0., 0, 1]])
     reg_p2p = o3d.registration.registration_icp(temp, pcd, threshold, trans_init,
                                                 o3d.registration.TransformationEstimationPointToPoint(),
-                                                o3d.registration.ICPConvergenceCriteria(max_iteration=6000))
+                                                o3d.registration.ICPConvergenceCriteria(max_iteration=30000))
+    print(reg_p2p)
     if log_flag:
         print(reg_p2p)
         print("3.Transformation is:")
@@ -737,6 +741,7 @@ def MapTemp(pcd, temp, label_idx_lst, log_flag = False):
 
     # create the line set after transformation
     points_labeled_trans = [np.asarray(temp_after_trans.points)[idx_lst[0]], np.asarray(temp_after_trans.points)[idx_lst[1]], np.asarray(temp_after_trans.points)[idx_lst[2]]]
+    draw_registration_result_original_color(temp, pcd, T, idx_lst)
     return points_labeled_trans
 
 
@@ -771,11 +776,11 @@ if __name__ == "__main__":
 
     capture_number = 0 
 
-    intersect = [-1.7001226584063929, -1.2195118109332483, -1.8784139792071741, -0.799168888722555, 1.625313401222229, -1.5555179754840296]
+    intersect = [-1.699487034474508, -1.2467449347125452, -1.6534598509417933, -0.9969080130206507, 1.6242467164993286, -1.5556133429156702]
 
     startj =  intersect
     execution = True
-    max_dis = 0.42
+    max_dis = 0.70
     mutilayer_exe = False
     total_time = []
 
