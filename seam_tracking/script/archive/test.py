@@ -35,29 +35,29 @@ def main(args):
 
     print("Going to start")
     startj = [-1.5366695562945765, -1.6485264937030237, -1.1686652342425745, -1.7946108023272913, 1.4708768129348755, -1.4940932432757776]
-    rob.movej(startj, acc=0.8, vel=0.4, wait=True)
+    # rob.movej(startj, acc=0.8, vel=0.4, wait=True)
     initj = rob.getj() #result in radius
     print("Initial joint configuration is ", initj)
 #     # t = rob.get_pose() #
 #     # print("Transformation from base to tcp is: ", t)
     count = 0
 
-    while count < 50:
+    # while count < 50:
 
-        p1 = [-1.2291749159442347, -1.6868732611285608, -1.5637076536761683, -1.4049976507769983, 1.506557583808899, -1.1270230452166956]
-        p2 = [-1.2272198835956019, -1.7004426161395472, -1.6823189894305628, -1.2730239073382776, 1.507084846496582, -1.12502366701235]
-        p3 =  [-0.10069827608962446, -0.5754213343267545, 0.012273970575881643, 2.08606199890458, -2.329059803372046, -0.017347841495701864]
+    #     p1 = [-1.2291749159442347, -1.6868732611285608, -1.5637076536761683, -1.4049976507769983, 1.506557583808899, -1.1270230452166956]
+    #     p2 = [-1.2272198835956019, -1.7004426161395472, -1.6823189894305628, -1.2730239073382776, 1.507084846496582, -1.12502366701235]
+    #     p3 =  [-0.10069827608962446, -0.5754213343267545, 0.012273970575881643, 2.08606199890458, -2.329059803372046, -0.017347841495701864]
 
-        rob.movej(p1, acc=0.1, vel=0.2, wait=True)
-        rob.movej(p2, acc=0.1, vel=0.2, wait=True)
-        rob.movel(p3, acc=0.2, vel=0.02, wait=True)
+    #     rob.movej(p1, acc=0.1, vel=0.2, wait=True)
+    #     rob.movej(p2, acc=0.1, vel=0.2, wait=True)
+    #     rob.movel(p3, acc=0.02, vel=0.002, wait=True)
 
-        rob.translate_tool((0, 0, -0.08), vel=0.1, acc=0.1, wait=True)
-    #     time.sleep(12)
-        rob.movej(p1, acc=0.1, vel=0.2, wait=True)
+    #     rob.translate_tool((0, 0, -0.08), vel=0.1, acc=0.1, wait=True)
+    # #     time.sleep(12)
+    #     rob.movej(p1, acc=0.1, vel=0.2, wait=True)
 
-        count = count + 1
-        print count
+    #     count = count + 1
+    #     print count
 
 #     print("stop robot")
     rob.stop()
