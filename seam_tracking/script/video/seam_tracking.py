@@ -129,7 +129,7 @@ class motion_controller:
                         logi_y_diff = logi_pre[-1]
                         angle_diff = logi_pre[0]
                         y_scale = vel_scale*0.5
-                        a_scale = vel_scale*0.5
+                        a_scale = vel_scale*0.8
 
                         if abs(logi_y_diff) > 2:
                             # print rs_y_diff
@@ -158,11 +158,11 @@ class motion_controller:
 
                             drz = a_scale*angle_diff
                         
-                        if abs(drz) > a_scale*0.5:
+                        if abs(drz) > a_scale*20:
                             if drz>0:
-                                drz= a_scale*0.5
+                                drz= a_scale*20
                             else:
-                                drz= -a_scale*0.5
+                                drz= -a_scale*20
                         
                         print "moving at z = "+str(drz)
                         
@@ -335,7 +335,6 @@ def main(args):
         print("Shutting down")
         rob.stop()
         rob.close()
-
     finally:
         rob.stop()
         rob.close()

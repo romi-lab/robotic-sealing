@@ -532,15 +532,16 @@ def preroi_point_filter():
             a1 = new_a1
             a2 = new_a2
             diff_count = 0
+        
 
-    filter_point_list.append([a1, a2])
-    
-    # f_k_list.append(new_k)
-    # f_b_list.append(new_b)
     point_list[-1][0] = alpha*a1 + (1-alpha)*point_list[-1][0]
     point_list[-1][1] = alpha*a2 + (1-alpha)*point_list[-1][1]
 
-    plot_filter()
+    # if np.array(point_list).shape[0]>n:
+    #     point_list = np.array(point_list)[-n:,:]
+
+    # filter_point_list.append([a1, a2])
+    # plot_filter()
 
     return int(a1), int(a2)
 
