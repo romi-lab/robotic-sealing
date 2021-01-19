@@ -42,7 +42,7 @@ def image_processor(capture):
         frame = cv2.GaussianBlur(frame,(5,5),0)                    
         hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
 
-        tip_width = int(width*76/160)
+        tip_width = int(width*65/160)
         tip_height = int(21/64*height) #240
         tip_pos = np.array([tip_width, tip_height])
 

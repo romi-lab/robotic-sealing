@@ -1,12 +1,6 @@
 <?xml version="1.0"?>
-<!--
-seam_tracking
-1.open_camera
-2.process img
-3.feedback control
--->
-<launch>
 
+<launch>
   <!-- logitech -->
   <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
     <param name="video_device" value="/dev/video4" />
@@ -25,14 +19,13 @@ seam_tracking
     <arg name="enable_sync"  value="true"/>
     <arg name="align_depth"  value="true"/>
   </include>
-  
-  <!-- process realsense -->
-  <node name="rs_rgb_processing" pkg="seam_tracking" type="rs_rgb_processing.py" />
 
   <!-- process logitech -->
-  <node name="logi_img_processing" pkg="seam_tracking" type="logi_img_processing.py" />
+  <node name="img_feedback_control" pkg="seam_tracking" type="seam_tracking.py" />
+  <node name="logi_img_processing" pkg="seam_tracking" type="measure_error.py" />
 
   <!-- rqt for process visualization -->
   <node name="rqt_gui" pkg="rqt_gui" type="rqt_gui"/>
+
 
 </launch>

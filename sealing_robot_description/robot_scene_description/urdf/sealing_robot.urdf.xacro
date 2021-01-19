@@ -16,10 +16,10 @@
   <link name="table">
     <visual>
       <geometry>
-        <box size="1.5 1.5 0.02"/>
+        <box size="2 1.5 0.02"/>
       </geometry>
       <material name="Wooden">
-        <color rgba="1.0 0.981 0.75 0.8"/>
+        <color rgba="1.0 0.981 0.75 1"/>
       </material>
     </visual>
     <collision>
@@ -56,7 +56,7 @@
   <parent link="tool0"/>
   <child link="sealing_gun"/>
   <!-- <origin xyz="0.00518 0.01107 0.10525" rpy="0 0 ${pi}"/> -->
-  <origin xyz="0.1478 0.033 -0.11525" rpy="0 0 ${pi}"/>
+  <origin xyz="0.1478 0.042 -0.11525" rpy="0 0 ${pi}"/>
 </joint> 
 
   <!-- <link name="post">

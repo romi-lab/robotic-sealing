@@ -54,7 +54,7 @@ class image_converter:
             limg = copy.deepcopy(frame)
             rimg = copy.deepcopy(frame)
 
-            tip_width = int(width*80/160)
+            tip_width = int(width*76/160)
             tip_height = int(23/64*height) #240
             tip_pos = np.array([tip_width, tip_height])
 
@@ -93,8 +93,6 @@ class image_converter:
             cv2.waitKey(1)
         
         image_processor(opencv_image)
-
-
 
 def process_pre_roi(limg, tip_pos):
 
