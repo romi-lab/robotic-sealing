@@ -842,13 +842,12 @@ if __name__ == "__main__":
 
                 print("\n=========================start seam detection====================")
                 # capture = raw_input("\n\nstart capture point cloud, q to quit: ")
-                start = time.time() #start counting
+                start = time.time() #start countinga
                 received_open3d_cloud = convertCloudFromRosToOpen3d(received_ros_cloud)
                 T_end_effector_wrt_base = robot.get_pose()
                 markerArray = MarkerArray()
                 PoseList_tip_rviz = PoseArray()
-
-                ur_poses = detect_groove_workflow(received_open3d_cloud, T_end_effector_wrt_base.array, detect_feature="asymmetry", show_groove=False)
+                ur_poses = detect_groove_withTemp(received_open3d_cloud, T_end_effector_wrt_base.array, detect_feature="asymmetry", show_groove=False)
                 
                 rospy.loginfo("-- Finish display. ...\n")
     robot.stop()
