@@ -33,75 +33,31 @@ def main(args):
     rob.set_tcp(tcp_torch)
 
 
-#     print("Going to start")
-#     # startj = [-1.0369790236102503, -1.0823825041400355, -2.211877171193258, 0.15503239631652832, 1.0424913167953491, -0.0012467543231409195]
-#     # rob.movej(startj, acc=0.8, vel=0.4, wait=True)
+    print("Going to start")
+    startj = [-1.5366695562945765, -1.6485264937030237, -1.1686652342425745, -1.7946108023272913, 1.4708768129348755, -1.4940932432757776]
+    rob.movej(startj, acc=0.8, vel=0.4, wait=True)
     initj = rob.getj() #result in radius
     print("Initial joint configuration is ", initj)
 #     # t = rob.get_pose() #
 #     # print("Transformation from base to tcp is: ", t)
+    count = 0
 
-#     p1 = [2.1390762329101562, -1.977527920399801, 2.101027011871338, -1.9881075064288538, -1.7569130102740687, 0.526220977306366]
-#     p2 = [2.0637872219085693, -1.7856486479388636, 2.19935941696167, -2.290964428578512, -1.7351067701922815, 0.45302730798721313]
-# #     p3 = [0.7490283250808716, -2.1367180983172815, 2.29533314704895, -1.9723175207721155, -1.3257330099688929, -0.8057563940631312]
+    while count < 50:
 
-#     vx = -0.01
-#     vy = 0
-#     vz = 0
+        p1 = [-1.2291749159442347, -1.6868732611285608, -1.5637076536761683, -1.4049976507769983, 1.506557583808899, -1.1270230452166956]
+        p2 = [-1.2272198835956019, -1.7004426161395472, -1.6823189894305628, -1.2730239073382776, 1.507084846496582, -1.12502366701235]
+        p3 =  [-0.10069827608962446, -0.5754213343267545, 0.012273970575881643, 2.08606199890458, -2.329059803372046, -0.017347841495701864]
 
-#     vrx = 0
-#     vry = 0
-#     vrz = 0
+        rob.movej(p1, acc=0.1, vel=0.2, wait=True)
+        rob.movej(p2, acc=0.1, vel=0.2, wait=True)
+        rob.movel(p3, acc=0.2, vel=0.02, wait=True)
 
-#     a = 0.05
-#     t = 8
+        rob.translate_tool((0, 0, -0.08), vel=0.1, acc=0.1, wait=True)
+    #     time.sleep(12)
+        rob.movej(p1, acc=0.1, vel=0.2, wait=True)
 
-#     rob.movej(p1, acc=0.1, vel=0.2, wait=True)
-#     rob.movej(p2, acc=0.1, vel=0.2, wait=True)
-#     rob.speedl([vx,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx+0.04,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx+0.04,vy,vz,vrx,vry,vrz], a, t)
-    
-#     rob.speedl([vx,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx+0.04,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx+0.04,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx+0.04,vy,vz,vrx,vry,vrz], a, t)
-    
-#     rob.speedl([vx,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx+0.04,vy,vz,vrx,vry,vrz], a, 1)
-    
-        
-#     rob.speedl([vx,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx+0.04,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx+0.04,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx+0.04,vy,vz,vrx,vry,vrz], a, t)
-    
-#     rob.speedl([vx,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx+0.04,vy,vz,vrx,vry,vrz], a, 1)
-      
-#     rob.speedl([vx,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx+0.04,vy,vz,vrx,vry,vrz], a, 1)
-    
-        
-#     rob.speedl([vx,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx+0.04,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx+0.04,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx+0.04,vy,vz,vrx,vry,vrz], a, t)
-    
-#     rob.speedl([vx,vy,vz,vrx,vry,vrz], a, t)
-#     rob.speedl([vx+0.04,vy,vz,vrx,vry,vrz], a, 1)
-
-
-    
-#     time.sleep(12)
-#     rob.movej(p3, acc=0.1, vel=0.2, wait=True)
+        count = count + 1
+        print count
 
 #     print("stop robot")
     rob.stop()

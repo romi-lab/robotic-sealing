@@ -203,86 +203,6 @@ def sort_points(points, regression_lines, sorted_point_distance=0.01):
     print("--- %s seconds to sort points ---" % (time.time() - sort_points_time))
     return np.array(sort_points_right)
 
-def generate_new_trajectory(pcd, groove, normal):
-    
-    points = np.asarray(groove.points)
-    
-    # Thin & sort points
-    thinned_points, regression_lines = thin_line(points)
-    sorted_points = sort_points(thinned_points, regression_lines)
-
-    draw = False
-
-    if draw == True:
-
-        # Run thinning and sorting algorithms
-        # Plotting
-        fig2 = plt.figure(2)
-        ax3d = fig2.add_subplot(111, projection='3d')
-
-        # Plot unordedered point cloud
-        ax3d.plot(points.T[0], points.T[1], points.T[2], 'm*')
-
-        # Plot sorted points
-        ax3d.plot(sorted_points.T[0], sorted_points.T[1], sorted_points.T[2], 'bo')
-
-        # Plot line going through sorted points 
-        ax3d.plot(sorted_points.T[0], sorted_points.T[1], sorted_points.T[2], '-b')
-
-        # Plot thinned points
-        # ax3d.plot(thinned_points.T[0], thinned_points.T[1], thinned_points.T[2], 'go')
-
-        fig2.show()
-        plt.show()
-
-    # trajectory = np_to_point_cloud(points, "base")
-
-    x = sorted_points[:, 0]
-    y = sorted_points[:, 1]
-    z = sorted_points[:, 2]
-    # print points[:]
-    (tck, u), fp, ier, msg = interpolate.splprep([x, y, z], s=float("inf"),full_output=1)
-    # (tck, u), fp, ier, msg = interpolate.splprep([x_pos, y_pos, z_pos], s=float("inf"),full_output=1)
-    # print tck
-    # print u
-    # line_fit = Line.best_fit(points)
-    # points = line_fit.project_point(points)
-    # Generate 5x points from approximated B-spline for drawing curve later
-    u_fine = np.linspace(0, 1, x.size*2)
-
-    # Evaluate points on B-spline
-    x_fine, y_fine, z_fine = interpolate.splev(u_fine, tck)
-
-    # Plot graphs
-    # fig2 = plt.figure(2)
-    # ax3d = fig2.add_subplot(111, projection="3d")
-    # # ax3d.plot(x, y, z, "b")
-    # ax3d.plot(x, y, z, "b")
-    # ax3d.plot(x_fine, y_fine, z_fine, "g")
-    # fig2.show()
-    # plt.show()
-    sorted_points = np.vstack((x_fine, y_fine, z_fine)).T
-    point_size_line = sorted_points.shape[0]
-    start_point = sorted_points[0]
-    end_point = sorted_points[point_size_line-1]
-    middle_point = (start_point + end_point)/2
-    vec = end_point - middle_point
-    proj = np.dot(vec, normal)*normal
-    vec = vec - proj
-    print np.dot(vec, normal)
-    displacemnt = []
-
-    for i in np.linspace(-1, 1, x.size):
-        displacemnt.append(i*vec)
-    
-    # rospy.loginfo(displacemnt)
-    sorted_points = np.array(np.add(displacemnt, middle_point))
-
-    trajectory_pcd = o3d.geometry.PointCloud()
-    trajectory_pcd.points = o3d.utility.Vector3dVector(sorted_points)
-
-    return trajectory_pcd
-
 def generate_trajectory(pcd, groove):
 
     points = np.asarray(groove.points)
@@ -291,6 +211,19 @@ def generate_trajectory(pcd, groove):
     thinned_points, regression_lines = thin_line(points)
     sorted_points = sort_points(thinned_points, regression_lines)
 
+    x = sorted_points[:, 0]
+    y = sorted_points[:, 1]
+    z = sorted_points[:, 2]
+    # # print points[:]
+    (tck, u), fp, ier, msg = interpolate.splprep([x, y, z], k=3, s=5, full_output=1)
+
+    u_fine = np.linspace(0, 1, x.size*2)
+
+    # # Evaluate points on B-spline
+    x_fine, y_fine, z_fine = interpolate.splev(u_fine, tck)
+
+    sorted_points = np.vstack((x_fine, y_fine, z_fine)).T
+
     draw = False
 
     if draw == True:
@@ -316,32 +249,6 @@ def generate_trajectory(pcd, groove):
         plt.show()
 
     # trajectory = np_to_point_cloud(points, "base")
-
-    x = sorted_points[:, 0]
-    y = sorted_points[:, 1]
-    z = sorted_points[:, 2]
-    # print points[:]
-    (tck, u), fp, ier, msg = interpolate.splprep([x, y, z], s=float("inf"),full_output=1)
-    # (tck, u), fp, ier, msg = interpolate.splprep([x_pos, y_pos, z_pos], s=float("inf"),full_output=1)
-    # print tck
-    # print u
-    # line_fit = Line.best_fit(points)
-    # points = line_fit.project_point(points)
-    # Generate 5x points from approximated B-spline for drawing curve later
-    u_fine = np.linspace(0, 1, x.size*2)
-
-    # Evaluate points on B-spline
-    x_fine, y_fine, z_fine = interpolate.splev(u_fine, tck)
-
-    # Plot graphs
-    # fig2 = plt.figure(2)
-    # ax3d = fig2.add_subplot(111, projection="3d")
-    # # ax3d.plot(x, y, z, "b")
-    # ax3d.plot(x, y, z, "b")
-    # ax3d.plot(x_fine, y_fine, z_fine, "g")
-    # fig2.show()
-    # plt.show()
-    sorted_points = np.vstack((x_fine, y_fine, z_fine)).T
 
     trajectory_pcd = o3d.geometry.PointCloud()
     trajectory_pcd.points = o3d.utility.Vector3dVector(sorted_points)
@@ -416,49 +323,6 @@ def callback_roscloud(ros_cloud):
 def transform_cam_wrt_base(pcd, T_end_effector_wrt_base):
     
 
-    T_cam_wrt_end_effector = np.array(  [[ 0.04708804, -0.97102151, -0.23430736,  0.128350972619 ],
-                                        [ 0.99791492,  0.05609536, -0.03192367,  -0.128848698927 ],
-                                        [ 0.04414212, -0.23231558,  0.97163828, 0.0962031389762 ],
-                                        [ 0., 0., 0., 1. ]])
-
-    # T_cam_wrt_end_effector = np.array( [[ 0.01969167, -0.97013029, -0.24178393,  0.15435793],
-    #                                     [ 0.99899659, 0.02882126, -0.03428047, -0.12564344],
-    #                                     [ 0.04022503, -0.24086628,  0.96972438,  0.11096916],
-    #                                     [ 0.,         0.,          0.,          1.     ]])
-
-    # T_cam_wrt_end_effector = np.array( [[ 0.01587296, -0.97119689 ,-0.23774914,  0.13027904],
-    #                                     [ 0.99871424  ,0.0268491  ,-0.04299998 ,-0.12601394],
-    #                                     [ 0.0481448  ,-0.23676092 , 0.97037433  ,0.09878878],
-    #                                     [ 0.          ,0.        ,  0.          ,1.        ]])
-
-
-    # T_cam_wrt_end_effector = np.array(   [[ 0.01493464, -0.97030832, -0.24140987,  0.13027904],
-    #                                             [ 0.99941363,  0.02192582, -0.02629934, -0.12843419],
-    #                                             [ 0.03081157, -0.24087554,  0.97006681,  0.09878878],
-    #                                             [ 0.        ,  0.         , 0.         , 1.        ]])
-
-
-    # T_cam_wrt_end_effector = np.array(     [[ 0.0168759,  -0.96977971 ,-0.24339785  ,0.15582396],
-    #                                             [ 0.99949713,  0.02289835 ,-0.02193504 ,-0.12829759],
-    #                                             [ 0.02684556, -0.24290528 , 0.96967847 , 0.10356235],
-    #                                             [ 0.         , 0.         , 0.         , 1.        ]])
-
-
-    # T_cam_wrt_end_effector = np.array(          [[ 0.01300151, -0.97083091 ,-0.23941241,  0.10472494],
-    #                                             [ 0.99931038,  0.02094413 ,-0.03066116, -0.1286029 ],
-    #                                             [ 0.03478109, -0.23884866  ,0.97043371,  0.0940657 ],
-    #                                             [ 0.         , 0.         , 0.         , 1.        ]])
-
-    T_cam_wrt_end_effector = np.array(  [[ 0.03599837, -0.97102151, -0.2362654, 0.122350972619 ],
-                                        [0.9953033 ,  0.05609536, -0.07889646  ,  -0.08164344 ],
-                                        [0.08986355, -0.23231558,  0.96848026  ,  0.1156235 ],
-                                        [ 0., 0., 0., 1. ]])
-
-    T_cam_wrt_end_effector = np.array(  [[ 0.01906336, -0.97169542, -0.23546676, 0.122350972619 ],
-                                        [0.99612939,  0.0386708 , -0.07893541, -0.08164344 ],
-                                        [ 0.08580687, -0.23305059,  0.96867157   , 0.1156235 ],
-                                        [ 0., 0., 0., 1. ]])
-
     T_cam_wrt_end_effector = np.array(  [[ 0.00211918, -0.97207334, -0.23466769,  0.122350972619],
                                         [ 0.9966516 ,  0.02123446 ,-0.07896004, -0.08004344],
                                         [ 0.08173799, -0.2337146 ,  0.96886345 , 0.1156235],
@@ -531,30 +395,6 @@ def save_pcd(pcd):
     o3d.io.write_point_cloud(output_filename, pcd)
     rospy.loginfo("-- Write result point cloud to: "+output_filename)
 
-def find_normal(trajectory, pcd):
-
-    plane_model, inliers = pcd.segment_plane(distance_threshold=0.003, ransac_n=20, num_iterations=100)
-    [a, b, c, d] = plane_model
-    plane_normal = np.array([a,b,c])
-    print("\n\n\n============")
-    print plane_model
-
-    trajectory_points = np.asarray(trajectory.points)
-    pcd_points = np.asarray(pcd.points)
-    trajectory_number = np.array(trajectory_points).shape[0] 
-    total = np.concatenate((trajectory_points, pcd_points), axis=0)
-    total_pcd = o3d.geometry.PointCloud()
-    total_pcd.points = o3d.utility.Vector3dVector(total)
-    total_pcd.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.02, max_nn=300))
-    total_pcd.normalize_normals()
-    total_pcd.orient_normals_to_align_with_direction(orientation_reference=-plane_normal)
-
-    selected_pcd = total_pcd.select_down_sample(range(trajectory_number))
-    points = np.asarray(selected_pcd.points)
-    normals = np.asarray(selected_pcd.normals)
-    normal = np.mean(normals, axis=0)
-    return normal
-
 def points_in_cylinder(pt1, pt2, r, query_points):
     """
     to check if a query point is in the cylinder definded as 
@@ -574,65 +414,48 @@ def points_in_cylinder(pt1, pt2, r, query_points):
             pass
     return points_lst
 
-def find_orientation(trajectory, pcd, groove, normal):
+def find_orientation(trajectory, pcd):
+    
+    trajectory = np.asarray(trajectory.points)
+    pcd = np.asarray(pcd.points)
+    trajectory_number = np.array(trajectory).shape[0]
+    total = np.concatenate((trajectory,pcd), axis=0)
+    total_pcd = o3d.geometry.PointCloud()
+    total_pcd.points = o3d.utility.Vector3dVector(total)
+    total_pcd.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=0.5, max_nn=100))
+    total_pcd.normalize_normals()
+    total_pcd.orient_normals_towards_camera_location(camera_location=[0, 0, 0])
 
-    global is_first_pose, is_sec_pose
-    points = np.asarray(trajectory.points)
-
+    selected_pcd = total_pcd.select_down_sample(range(trajectory_number))
+    points = np.asarray(selected_pcd.points)
+    normals = -np.asarray(selected_pcd.normals)
     rotvecs = []
-
-    z_dir = normal
-    pos_diff = points[1]-points[0]
-    proj = np.dot(pos_diff, z_dir)*z_dir
-    x_dir = pos_diff - proj
-    x_dir = x_dir/np.linalg.norm(x_dir,axis=0)
-    y_dir = np.cross(z_dir, x_dir)
-    y_dir = y_dir/np.linalg.norm(y_dir,axis=0)
-    r = R.from_dcm(np.vstack((x_dir, y_dir, z_dir)).T)
-    orientation = r.as_quat() # in the manner of 
-    # euler = r.as_euler('xyz', degrees=True)
-    # euler[0] = euler[0] + 180
-    # new_r = R.from_euler('xyz', euler, degrees=True)
-    rotvec = r.as_rotvec()
-    # rotvec[1] = rotvec[1]+np.pi
+    
 
     for i in range(np.array(points).shape[0]):
-
-        if is_first_pose:
-
-            #publish to tip_pose
-            first_pose = Pose()
-            #tip position
-            first_pose.position.x = points[i][0]
-            first_pose.position.y = points[i][1]
-            first_pose.position.z = points[i][2]
-            #tip orientation
-            first_pose.orientation.x = orientation[0]
-            first_pose.orientation.y = orientation[1]
-            first_pose.orientation.z = orientation[2]
-            first_pose.orientation.w = orientation[3]
-            pub_first_pose.publish(first_pose)
-            print("first pose published")
-            is_first_pose = False
-            is_sec_pose = True
-            #publish pen tip pose trajectory
         
-        if is_first_pose == False and is_sec_pose == True:
+        pos_diff = 0
+        z_dir = normals[i]
+        #find x direction based on point   
+        if i == 0:
+            pos_diff = points[i+1]-points[i]
+            z_dir = normals[i+1]
+        elif i == (np.array(points).shape[0]-1):
+            pos_diff = points[i]-points[i-1]
+            z_dir = normals[i-1]
+        else:
+            pos_diff = points[i+1]-points[i]
+            z_dir = normals[i]
 
-            first_point = points[i-1][0:3]
-            sec_point = points[i][0:3]
-            velocity_vec = sec_point-first_point
-            print("velocity vector published")
-            print(velocity_vec)
-
-            vel_vec_point = Point()
-            vel_vec_point.x = -velocity_vec[0]
-            vel_vec_point.y = -velocity_vec[1]
-            vel_vec_point.z = -velocity_vec[2]
-
-            pub_vel_vec.publish(vel_vec_point)
-
-            is_sec_pose=False
+        proj = np.dot(pos_diff, z_dir)*z_dir
+        x_dir = pos_diff - proj
+        x_dir = x_dir/np.linalg.norm(x_dir,axis=0)
+        y_dir = np.cross(z_dir, x_dir)
+        y_dir = y_dir/np.linalg.norm(y_dir,axis=0)
+        r = R.from_dcm(np.vstack((x_dir, y_dir, z_dir)).T)
+        orientation = r.as_quat() # in the manner of 
+        rotvec = r.as_rotvec()
+        rotvecs.append(rotvec)
 
         #publish to tip_pose
         tip_pose_rviz = Pose()
@@ -648,7 +471,7 @@ def find_orientation(trajectory, pcd, groove, normal):
         #publish pen tip pose trajectory
         PoseList_tip_rviz.poses.append(tip_pose_rviz)
 
-        #publish as marker array to check the sequence, id = base for vosualization only
+        #publish as marker array to check the sequence
         marker = Marker() 
         marker.header.frame_id = 'base'
         marker.type = marker.TEXT_VIEW_FACING
@@ -669,9 +492,7 @@ def find_orientation(trajectory, pcd, groove, normal):
         marker.pose.orientation.w = 1
         marker.text = str(i)
         markerArray.markers.append(marker)
-
-        rotvecs.append(rotvec)
-
+    
     id = 0
     for m in markerArray.markers:
         m.id = id
@@ -785,9 +606,6 @@ def uplift_z(ur_poses):
     return new_ur_poses
 
 
-
-
-
 def detect_groove_withTemp(pcd, transfromation_end_to_base, detect_feature="asymmetry" , show_groove=False, publish=True, save_data=True):
     # 2.downsample of point cloud
     global max_dis, total_time, voxel_size, delete_percentage
@@ -807,6 +625,9 @@ def detect_groove_withTemp(pcd, transfromation_end_to_base, detect_feature="asym
     # pcd.remove_radius_outlier(nb_points=20, radius = 4*voxel_size)
     pc_number = np.asarray(pcd.points).shape[0]
     rospy.loginfo("Total number of pc {}".format(pc_number))
+
+    rviz_cloud = convertCloudFromOpen3dToRos(pcd, frame_id="base")
+    pub_pc.publish(rviz_cloud)
     # ----------------------- Generate Groove ----------------------------------
 
     cube_temp = o3d.io.read_point_cloud(config.temp['tcube']['path'])
@@ -820,6 +641,12 @@ def detect_groove_withTemp(pcd, transfromation_end_to_base, detect_feature="asym
     groove2 = points_in_cylinder(p2, p3, r, np.asarray(pcd.points))
     grooves = groove1.extend(groove2)
 
+    rviz_cloud = convertCloudFromOpen3dToRos(grooves, frame_id="base")
+    pub_pc.publish(rviz_cloud)
+
+    pc_number = np.asarray(grooves.points).shape[0]
+    rospy.loginfo("Total number of pc {}".format(pc_number))
+
     # ------------------------ Output Groove   ---------------------------------
     groove_t = time.time()
     rospy.loginfo("Runtime of groove detection is {}".format(groove_t - start))
@@ -828,28 +655,14 @@ def detect_groove_withTemp(pcd, transfromation_end_to_base, detect_feature="asym
     groove = transform_cam_wrt_base(grooves, transfromation_end_to_base)
 
     trajectory = generate_trajectory(pcd, groove)
-    normal = find_normal(trajectory, pcd)
-    points = np.asarray(trajectory.points)
-    point_size_line = points.shape[0]
-    start_point = points[0]
-    end_point = points[point_size_line - 1]
+    ur_poses = find_orientation(trajectory, pcd)
 
-    refined_groove = points_in_cylinder(start_point, end_point, voxel_size * 5, np.asarray(groove.points))
-    refined_groove_pcd = o3d.geometry.PointCloud()
-    refined_groove_pcd.points = o3d.utility.Vector3dVector(refined_groove)
-    refined_groove_pcd.remove_statistical_outlier(nb_neighbors=20, std_ratio=2)
-    new_trajectory = generate_new_trajectory(pcd, refined_groove_pcd, normal)
-    ur_poses = find_orientation(new_trajectory, pcd, refined_groove_pcd, normal)
-    groove = refined_groove_pcd
     # ur_poses = find_orientation(trajectory, pcd, groove, normal)
 
     traj_t = time.time()
     rospy.loginfo("Runtime of trajectory is {}".format(traj_t - groove_t))
 
-    if publish:
-    # the point cloud is wrt base link (correct)
-    # however for visalization purpose, we need to set it to base
-        pcd.paint_uniform_color([0.7, 0.7, 0.7])
+    pcd.paint_uniform_color([0.7, 0.7, 0.7])
     rviz_cloud = convertCloudFromOpen3dToRos(pcd, frame_id="base")
     pub_pc.publish(rviz_cloud)
 
@@ -877,105 +690,6 @@ def detect_groove_withTemp(pcd, transfromation_end_to_base, detect_feature="asym
     rospy.loginfo("Total process {}".format(np.array(total_time).shape[0]))
     rospy.loginfo("Average Runtime of process is {}".format(np.mean(total_time)))
     return ur_poses
-
-
-def detect_groove_workflow(pcd, transfromation_end_to_base, detect_feature="asymmetry" , show_groove=False, publish=True, save_data=True):
-
-     # 2.downsample of point cloud
-
-    global max_dis, total_time, voxel_size, delete_percentage
-
-    original_pcd = pcd
-
-    voxel_size = 0.004
-    pcd = pcd.voxel_down_sample(voxel_size=voxel_size)
-
-    # delete points along z axis in TCP.
-    pcd_points = np.asarray(pcd.points)
-    pcd.clear()
-    pcd_points = pcd_points[pcd_points[:,2]<max_dis]
-    pcd.points = o3d.utility.Vector3dVector(pcd_points)
-
-    
-    pcd.remove_none_finite_points()
-    # pcd.remove_statistical_outlier(nb_neighbors=20, std_ratio=1.0)
-    # pcd.remove_radius_outlier(nb_points=20, radius = 4*voxel_size)
-    pc_number = np.asarray(pcd.points).shape[0]
-    rospy.loginfo("Total number of pc {}".format(pc_number))
-
-
-    # 3.estimate normal toward cam location and normalise it
-    pcd.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamHybrid(
-         radius=0.01, max_nn=30))
-    pcd.normalize_normals()
-    pcd.orient_normals_towards_camera_location(camera_location=[0., 0., 0.])
-
-    # 4.use different geometry features to find groove
-    feautre_value_list = find_feature_value(detect_feature, pcd, voxel_size)
-    normalised_feautre_value_list = normalise_feautre(feautre_value_list)
-    
-    # 5.delete low value points and cluster
-    delete_points = int(pc_number*delete_percentage)
-    pcd_selected = pcd.select_down_sample(np.argsort(normalised_feautre_value_list)[delete_points:])
-    groove = cluster_groove_from_point_cloud(pcd_selected, voxel_size)
-
-    groove_t = time.time()
-    rospy.loginfo("Runtime of groove detection is {}".format(groove_t-start))
-
-    pcd = transform_cam_wrt_base(pcd, transfromation_end_to_base)
-    groove = transform_cam_wrt_base(groove, transfromation_end_to_base)
-
-    trajectory = generate_trajectory(pcd, groove)
-    normal = find_normal(trajectory, pcd) 
-    points = np.asarray(trajectory.points)
-    point_size_line = points.shape[0]
-    start_point = points[0]
-    end_point = points[point_size_line-1]
-
-    refined_groove = points_in_cylinder(start_point, end_point, voxel_size*5, np.asarray(groove.points))
-    refined_groove_pcd = o3d.geometry.PointCloud()
-    refined_groove_pcd.points = o3d.utility.Vector3dVector(refined_groove)
-    refined_groove_pcd.remove_statistical_outlier(nb_neighbors=20, std_ratio=2)
-    new_trajectory = generate_new_trajectory(pcd, refined_groove_pcd, normal)
-    ur_poses = find_orientation(new_trajectory, pcd, refined_groove_pcd, normal)
-    groove = refined_groove_pcd
-    # ur_poses = find_orientation(trajectory, pcd, groove, normal)
-
-    traj_t = time.time()
-    rospy.loginfo("Runtime of trajectory is {}".format(traj_t-groove_t))
-
-    if publish:
-        # the point cloud is wrt base link (correct)
-        # however for visalization purpose, we need to set it to base
-        pcd.paint_uniform_color([0.7, 0.7, 0.7])
-        rviz_cloud = convertCloudFromOpen3dToRos(pcd, frame_id="base")
-        pub_pc.publish(rviz_cloud)
-
-        groove.paint_uniform_color([1, 0, 0])
-        rviz_groove = convertCloudFromOpen3dToRos(groove, frame_id="base")
-        pub_groove.publish(rviz_groove)
-
-        trajectory.paint_uniform_color([0, 1, 0])
-        rviz_trajectory = convertCloudFromOpen3dToRos(trajectory, frame_id="base")
-        pub_trajectory.publish(rviz_trajectory)
-
-        rospy.loginfo("Conversion and publish success ...\n")
-        # rospy.sleep(1)
-
-    if show_groove:
-        o3d.visualization.draw_geometries([pcd, groove, trajectory])
-        # o3d.visualization.draw_geometries([pcd])
-
-    if save_data:
-        save_pcd(original_pcd)
-    
-    end = time.time()
-    rospy.loginfo("Runtime of process is {}".format(end-start))
-    total_time.append(end-start)
-    rospy.loginfo("Total process {}".format(np.array(total_time).shape[0]))
-    rospy.loginfo("Average Runtime of process is {}".format(np.mean(total_time)))
-    return ur_poses
-
 
 def draw_registration_result_original_color(source, target, transformation, idx_lst):
     source_temp = copy.deepcopy(source)
@@ -1057,27 +771,11 @@ if __name__ == "__main__":
 
     capture_number = 0 
 
-    horizontal_plane = [-1.3588979879962366, -1.0134013334857386, -2.2536891142474573, -0.17619353929628545, 1.302361011505127, -1.509554688130514]
+    intersect = [-1.7001226584063929, -1.2195118109332483, -1.8784139792071741, -0.799168888722555, 1.625313401222229, -1.5555179754840296]
 
-    # parameter 
-    # max_dis = 0.4
-    # offset_z = -0.003
-    # offset_y = -0.003
-
-    normal_plane = [-1.5366695562945765, -1.6485264937030237, -1.1686652342425745, -1.7946108023272913, 1.4708768129348755, -1.4940932432757776]
-
-    vertical_plane = [-1.340297047291891, -1.1544345060931605, -2.4866958300219935, 0.49034059047698975, 1.2755035161972046, -1.567136589680807]
-
-    # offset_z = -0.005
-    # offset_y = -0.003
-    # offset_x = 0.005
-
-    cube = [-1.32884389558901, -1.4910205046283167, -2.6015103499041956, 1.2944217920303345, 1.2764376401901245, -1.646374527608053]
-    beam =  [-1.7694414297686976, -1.57973558107485, -2.2488768736468714, 0.2736845016479492, 2.225740671157837, -0.4579232374774378]
-
-    startj =  normal_plane
+    startj =  intersect
     execution = True
-    max_dis = 0.7
+    max_dis = 0.42
     mutilayer_exe = False
     total_time = []
 
@@ -1123,7 +821,7 @@ if __name__ == "__main__":
                     markerArray = MarkerArray()
                     PoseList_tip_rviz = PoseArray()
 
-                    ur_poses = detect_groove_workflow(received_open3d_cloud, T_end_effector_wrt_base.array, detect_feature="asymmetry", show_groove=False)
+                    ur_poses = detect_groove_withTemp(received_open3d_cloud, T_end_effector_wrt_base.array, detect_feature="asymmetry", show_groove=False)
 
 
                     ur_poses = uplift_z(ur_poses)

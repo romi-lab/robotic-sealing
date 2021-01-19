@@ -214,25 +214,12 @@ def generate_trajectory(pcd, groove):
     z = sorted_points[:, 2]
     # # print points[:]
     (tck, u), fp, ier, msg = interpolate.splprep([x, y, z], k=3, s=5, full_output=1)
-    # # (tck, u), fp, ier, msg = interpolate.splprep([x_pos, y_pos, z_pos], s=float("inf"),full_output=1)
-    # # print tck
-    # # print u
-    # # line_fit = Line.best_fit(points)
-    # # points = line_fit.project_point(points)
-    # # Generate 5x points from approximated B-spline for drawing curve later
+
     u_fine = np.linspace(0, 1, x.size*2)
 
     # # Evaluate points on B-spline
     x_fine, y_fine, z_fine = interpolate.splev(u_fine, tck)
 
-    # Plot graphs
-    # fig2 = plt.figure(2)
-    # ax3d = fig2.add_subplot(111, projection="3d")
-    # # ax3d.plot(x, y, z, "b")
-    # ax3d.plot(x, y, z, "b")
-    # ax3d.plot(x_fine, y_fine, z_fine, "g")
-    # fig2.show()
-    # plt.show()
     sorted_points = np.vstack((x_fine, y_fine, z_fine)).T
 
     draw = False
