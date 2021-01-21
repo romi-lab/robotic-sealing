@@ -414,56 +414,18 @@ def callback_roscloud(ros_cloud):
 def transform_cam_wrt_base(pcd, T_end_effector_wrt_base):
     
 
-    T_cam_wrt_end_effector = np.array(  [[ 0.04708804, -0.97102151, -0.23430736,  0.128350972619 ],
-                                        [ 0.99791492,  0.05609536, -0.03192367,  -0.128848698927 ],
-                                        [ 0.04414212, -0.23231558,  0.97163828, 0.0962031389762 ],
-                                        [ 0., 0., 0., 1. ]])
 
-    # T_cam_wrt_end_effector = np.array( [[ 0.01969167, -0.97013029, -0.24178393,  0.15435793],
-    #                                     [ 0.99899659, 0.02882126, -0.03428047, -0.12564344],
-    #                                     [ 0.04022503, -0.24086628,  0.96972438,  0.11096916],
-    #                                     [ 0.,         0.,          0.,          1.     ]])
-
-    # T_cam_wrt_end_effector = np.array( [[ 0.01587296, -0.97119689 ,-0.23774914,  0.13027904],
-    #                                     [ 0.99871424  ,0.0268491  ,-0.04299998 ,-0.12601394],
-    #                                     [ 0.0481448  ,-0.23676092 , 0.97037433  ,0.09878878],
-    #                                     [ 0.          ,0.        ,  0.          ,1.        ]])
-
-
-    # T_cam_wrt_end_effector = np.array(   [[ 0.01493464, -0.97030832, -0.24140987,  0.13027904],
-    #                                             [ 0.99941363,  0.02192582, -0.02629934, -0.12843419],
-    #                                             [ 0.03081157, -0.24087554,  0.97006681,  0.09878878],
-    #                                             [ 0.        ,  0.         , 0.         , 1.        ]])
-
-
-    # T_cam_wrt_end_effector = np.array(     [[ 0.0168759,  -0.96977971 ,-0.24339785  ,0.15582396],
-    #                                             [ 0.99949713,  0.02289835 ,-0.02193504 ,-0.12829759],
-    #                                             [ 0.02684556, -0.24290528 , 0.96967847 , 0.10356235],
-    #                                             [ 0.         , 0.         , 0.         , 1.        ]])
-
-
-    # T_cam_wrt_end_effector = np.array(          [[ 0.01300151, -0.97083091 ,-0.23941241,  0.10472494],
-    #                                             [ 0.99931038,  0.02094413 ,-0.03066116, -0.1286029 ],
-    #                                             [ 0.03478109, -0.23884866  ,0.97043371,  0.0940657 ],
-    #                                             [ 0.         , 0.         , 0.         , 1.        ]])
-
-    T_cam_wrt_end_effector = np.array(  [[ 0.03599837, -0.97102151, -0.2362654, 0.122350972619 ],
-                                        [0.9953033 ,  0.05609536, -0.07889646  ,  -0.08164344 ],
-                                        [0.08986355, -0.23231558,  0.96848026  ,  0.1156235 ],
-                                        [ 0., 0., 0., 1. ]])
-
-    T_cam_wrt_end_effector = np.array(  [[ 0.01906336, -0.97169542, -0.23546676, 0.122350972619 ],
-                                        [0.99612939,  0.0386708 , -0.07893541, -0.08164344 ],
-                                        [ 0.08580687, -0.23305059,  0.96867157   , 0.1156235 ],
-                                        [ 0., 0., 0., 1. ]])
-
-    T_cam_wrt_end_effector = np.array(  [[ 0.00211918, -0.97207334, -0.23466769,  0.122350972619],
-                                        [ 0.9966516 ,  0.02123446 ,-0.07896004, -0.08004344],
-                                        [ 0.08173799, -0.2337146 ,  0.96886345 , 0.1156235],
-                                        [ 0.      ,    0.         , 0.      ,    1.        ]])
+    T_cam_wrt_end_effector = np.array(  [[-0.01752474 ,-0.97207334, -0.23402201, 0.122350972619],
+                                        [ 0.986549  ,  0.02123446 ,-0.16208077, -0.08164344],
+                                        [ 0.16252373 ,-0.2337146 ,  0.95862585 ,  0.1156235],
+                                        [ 0.          ,0.       ,   0.          ,1.        ]])
 
 
 
+    T_cam_wrt_end_effector = np.array( [[-0.02160632 ,-0.97207334 ,-0.23368052,  0.122350972619],
+                                    [ 0.98357004,  0.02123446, -0.17927374, -0.08164344],
+                                    [ 0.17922931 ,-0.2337146   ,0.95564342 ,  0.1156235],
+                                    [ 0.         , 0.      ,    0.         ,1.        ]])
 
     pcd_copy1 = copy.deepcopy(pcd).transform(T_cam_wrt_end_effector)
     pcd_copy1.paint_uniform_color([0.5, 0.5, 1])
@@ -586,7 +548,8 @@ def find_orientation(trajectory, pcd, groove, normal):
     x_dir = x_dir/np.linalg.norm(x_dir,axis=0)
     y_dir = np.cross(z_dir, x_dir)
     y_dir = y_dir/np.linalg.norm(y_dir,axis=0)
-    r = R.from_dcm(np.vstack((x_dir, y_dir, z_dir)).T)
+    r = R.from_dcm(np.vstack((x_dir,y_dir, z_dir)).T)
+    # r = R.from_dcm(np.vstack((x_dir, y_dir, z_dir)).T)
     orientation = r.as_quat() # in the manner of 
     # euler = r.as_euler('xyz', degrees=True)
     # euler[0] = euler[0] + 180
@@ -632,20 +595,6 @@ def find_orientation(trajectory, pcd, groove, normal):
 
             is_sec_pose=False
 
-        #publish to tip_pose
-        tip_pose_rviz = Pose()
-        #tip position
-        tip_pose_rviz.position.x = points[i][0]
-        tip_pose_rviz.position.y = points[i][1]
-        tip_pose_rviz.position.z = points[i][2]
-        #tip orientation
-        tip_pose_rviz.orientation.x = orientation[0]
-        tip_pose_rviz.orientation.y = orientation[1]
-        tip_pose_rviz.orientation.z = orientation[2]
-        tip_pose_rviz.orientation.w = orientation[3]
-        #publish pen tip pose trajectory
-        PoseList_tip_rviz.poses.append(tip_pose_rviz)
-
         #publish as marker array to check the sequence, id = base for vosualization only
         marker = Marker() 
         marker.header.frame_id = 'base'
@@ -676,9 +625,6 @@ def find_orientation(trajectory, pcd, groove, normal):
         id += 1
     pub_marker.publish(markerArray)
 
-    PoseList_tip_rviz.header.frame_id = 'base'
-    PoseList_tip_rviz.header.stamp = rospy.Time.now()
-    pub_poses.publish(PoseList_tip_rviz)
     ur_poses = np.hstack((points, np.array(rotvecs)))
 
     return ur_poses
@@ -689,9 +635,19 @@ def trajectory_execution(pose_list):
         # tcp_torch = [-0.00072, 0.05553, 0.2312, -0.8504775921315857, -0.02340453557068149, -0.015929517346989313]
         tcp_torch = [-0.0002, -0.08916, 0.32202, 0, 0, 0]
         robot.set_tcp(tcp_torch)
-        time.sleep(0.3) #pause is essentail for tcp to take effect, min time is 0.1s
+        time.sleep(0.2) #pause is essentail for tcp to take effect, min time is 0.1s
 
-        robot.movel(pose_list[0], acc=0.1, vel=0.1, wait=True)
+        approah = [0,0,0,0,0,0]
+        approah[0] = pose_list[0][0]
+        # approah[1] = pose_list[0][1] + 0.05
+        approah[1] = pose_list[0][1]
+        approah[2] = pose_list[0][2] + 0.05
+        approah[3] = pose_list[0][3]
+        approah[4] = pose_list[0][4]
+        approah[5] = pose_list[0][5]
+        first_pose = copy.deepcopy(pose_list[0])
+        robot.movel(approah, acc=0.1, vel=0.1, wait=True)
+        robot.movel(first_pose, acc=0.1, vel=0.1, wait=True)
 
         start = Point()
         start.x = 1
@@ -699,12 +655,14 @@ def trajectory_execution(pose_list):
         start.z = 0
         pub_start_process.publish(start)
 
+        raw_input("press any to contiue")
 
+        
+        # time.sleep(0.2)
+        robot.movel(pose_list[1], acc=0.003, vel=0.003, wait=True)
+        # robot.movel(pose_list[2], acc=0.1, vel=0.1, wait=True)
         robot.set_digital_out(0,True)
-        time.sleep(0)
-        # for pose in pose_list:
-        #     robot.movep(pose, acc=0.02, vel=0.02, wait=False)
-        robot.movels(pose_list, acc=0.015, vel=0.03, wait=True)
+        robot.movels(pose_list[2:], acc=0.003, vel=0.003, wait=True)
 
         start = Point()
         start.x = -1
@@ -714,20 +672,21 @@ def trajectory_execution(pose_list):
 
         robot.set_digital_out(0,False)
         # raw_input("Press any to continue")
-        robot.translate_tool((0, 0, -0.08), vel=0.1, acc=0.1, wait=True)
+        robot.translate_tool((0, 0, -0.05), vel=0.1, acc=0.1, wait=True)
 
 def mutilayer(poses):
     
-    z_height=-0.004 #m
-    y_height=-0.006
+    z_height=0.0006 #m
+    y_height=0.002
     r_origin = R.from_rotvec(poses[0][3:])
     Rot_matrix = r_origin.as_dcm()
     new_y = Rot_matrix[:,1]
     new_z = Rot_matrix[:,2]
-    z_offset = new_z*z_height
-    y_offset = new_y*y_height
+    z_offset = -new_z*z_height
+    y_offset = -new_y*y_height
 
-    angle = math.atan(y_height/z_height)
+    angle = math.atan2(z_height, y_height)
+    print angle
     left_angle = angle/2-np.pi/4
     poses_copy_left = copy.deepcopy(poses)
     poses_copy_right = copy.deepcopy(poses)
@@ -767,37 +726,42 @@ def uplift_z(ur_poses):
     new_x = Rot_matrix[:,0]
     #the length of pen 0.22m, cube dim: 0.02*0.02 unit:m
     # pen_length = 0.19 #planer
-    offset_z = -0.005
-    offset_y = -0.003
-    offset_x = 0
+    offset_z = 0.002
+    offset_y = 0.00
+    offset_x = 0.000
     # offset = 0.22 for setting camera as tcp
     displacement_z = offset_z*new_z
     displacement_y = offset_y*new_y
     displacement_x = offset_x*new_x
     new_ur_poses = []
     for urpose in ur_poses:
-        urpose[0] = urpose[0] + displacement_z[0] + displacement_y[0] + displacement_x[0]
+
+        urpose[0] = urpose[0] + displacement_z[0] + displacement_y[0] + displacement_x[0] 
         urpose[1] = urpose[1] + displacement_z[1] + displacement_y[1] + displacement_x[1]
         urpose[2] = urpose[2] + displacement_z[2] + displacement_y[2] + displacement_x[2]
+        # sealing on two layer
+        # urpose[1] = urpose[1] + displacement_z[1] + displacement_y[1] + displacement_x[1] - 0.001
+        # urpose[2] = urpose[2] + displacement_z[2] + displacement_y[2] + displacement_x[2] - 0.009
         new_ur_poses.append(urpose)
     return new_ur_poses
 
-def detect_groove_workflow(pcd, transfromation_end_to_base, detect_feature="asymmetry" , show_groove=False, publish=True, save_data=True):
+def detect_groove_workflow(pcd, transfromation_end_to_base, detect_feature="asymmetry" , show_groove=False, publish=True, save_data=False):
 
      # 2.downsample of point cloud
 
     global max_dis, total_time, voxel_size, delete_percentage
 
+    # raw_input("press to continue")
+
     original_pcd = pcd
 
-    voxel_size = 0.004
+    voxel_size = 0.005
     pcd = pcd.voxel_down_sample(voxel_size=voxel_size)
 
     pcd_points = np.asarray(pcd.points)
     pcd.clear()
     pcd_points = pcd_points[pcd_points[:,2]<max_dis]
     pcd.points = o3d.utility.Vector3dVector(pcd_points)
-
     
     pcd.remove_none_finite_points()
     # pcd.remove_statistical_outlier(nb_neighbors=20, std_ratio=1.0)
@@ -884,6 +848,49 @@ def detect_groove_workflow(pcd, transfromation_end_to_base, detect_feature="asym
 
     return ur_poses
 
+def rotate_pose_for_sealing(poses):
+
+    rotate_R = R.from_euler('y', -35, degrees=True)
+    rotate_pose = []
+
+    for pose in poses:
+
+        r = R.from_rotvec(pose[3:])
+        new_r = r*rotate_R
+        new_rot_vec = new_r.as_rotvec()
+        pose[3:]=new_rot_vec
+        rotate_pose.append(pose)
+    
+    return rotate_pose
+
+def publish_trajectory(poses):
+
+    PoseList_tip_rviz = PoseArray()
+
+    for pose in poses:
+
+        r = R.from_rotvec(pose[3:])
+        orientation = r.as_quat()
+
+        #publish to tip_pose
+        tip_pose_rviz = Pose()
+        #tip position
+        tip_pose_rviz.position.x = pose[0]
+        tip_pose_rviz.position.y = pose[1]
+        tip_pose_rviz.position.z = pose[2]
+        #tip orientation
+        tip_pose_rviz.orientation.x = orientation[0]
+        tip_pose_rviz.orientation.y = orientation[1]
+        tip_pose_rviz.orientation.z = orientation[2]
+        tip_pose_rviz.orientation.w = orientation[3]
+        #publish pen tip pose trajectory
+        PoseList_tip_rviz.poses.append(tip_pose_rviz)
+
+    PoseList_tip_rviz.header.frame_id = 'base'
+    PoseList_tip_rviz.header.stamp = rospy.Time.now()
+    pub_poses.publish(PoseList_tip_rviz)
+
+
 if __name__ == "__main__":
        
     rospy.init_node('welding_demo', anonymous=True)
@@ -897,7 +904,7 @@ if __name__ == "__main__":
     is_sec_pose = False
     voxel_size = 0.005
     neighbor = 5*voxel_size
-    delete_percentage = 0.86
+    delete_percentage = 0.95
 
     received_ros_cloud = None
     rospy.Subscriber('/camera/depth/color/points', PointCloud2, callback_roscloud, queue_size=1)  
@@ -930,26 +937,17 @@ if __name__ == "__main__":
     # offset_x = 0.005
 
     cube = [-1.32884389558901, -1.4910205046283167, -2.6015103499041956, 1.2944217920303345, 1.2764376401901245, -1.646374527608053]
-    beam =  [-1.7694414297686976, -1.57973558107485, -2.2488768736468714, 0.2736845016479492, 2.225740671157837, -0.4579232374774378]
+    beam =  [-1.733206574116842, -1.075972859059469, -2.091264073048727, -0.379343334828512, 2.190109968185425, -0.44370919862856084]
+    I_beam =  [-0.9549530188189905, -1.5682643095599573, -2.155350987111227, 0.12100887298583984, 0.1719762533903122, 0.5123952627182007]
+
+    sealing_two_plane =  [-1.3595932165728968, -1.536405388508932, -1.3151958624469202, -1.7422354857074183, 1.4140154123306274, 0.17579922080039978]
 
     startj =  normal_plane
     execution = True
     max_dis = 0.7
     mutilayer_exe = False
     total_time = []
-
-    if len(sys.argv) == 1:
-        pass
-    elif len(sys.argv) == 2:
-        #type and execution
-        wp_type = int(sys.argv[1])
-        if wp_type == 1:
-            startj = [-1.3595932165728968, -1.536405388508932, -1.3151958624469202, -1.7422354857074183, 1.4140154123306274, 0.17579922080039978]
-    elif len(sys.argv) == 3:
-        execution = False
-        wp_type = int(sys.argv[1])
-        if wp_type == 1:
-            startj =  [-1.3595932165728968, -1.536405388508932, -1.3151958624469202, -1.7422354857074183, 1.4140154123306274, 0.17579922080039978]
+    sealing = True
 
     while not rospy.is_shutdown():
         
@@ -982,11 +980,18 @@ if __name__ == "__main__":
 
                     ur_poses = detect_groove_workflow(received_open3d_cloud, T_end_effector_wrt_base.array, detect_feature="asymmetry", show_groove=False)
                     ur_poses = uplift_z(ur_poses)
-                    left_poses, right_poses = mutilayer(ur_poses)
-                    # print ur_poses
+
+                    if sealing:
+                        ur_poses = rotate_pose_for_sealing(ur_poses)
+
+                    publish_trajectory(ur_poses)
                     trajectory_execution(ur_poses)
-                    if mutilayer_exe == True:
+
+                    if mutilayer_exe:
+                        left_poses, right_poses = mutilayer(ur_poses)
+                        publish_trajectory(left_poses)
                         trajectory_execution(left_poses)
+                        publish_trajectory(right_poses)
                         trajectory_execution(right_poses)
 
                     rospy.loginfo("-- Finish display. ...\n")

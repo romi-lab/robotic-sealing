@@ -398,7 +398,7 @@ def detect_groove_workflow(pcd, transfromation_end_to_base, detect_feature="asym
 
     global max_dis, total_time
 
-    voxel_size = 0.003
+    voxel_size = 0.001
     pcd = pcd.voxel_down_sample(voxel_size=voxel_size)
 
     if visualiza_process:
@@ -670,7 +670,7 @@ if __name__ == "__main__":
     robot = urx.Robot("192.168.0.2")
 
     # -- Set subscriber
-    global received_ros_cloud, max_dis, total_time
+    global received_ros_cloud, max_dis, total_time, max_dis
     received_ros_cloud = None
     rospy.Subscriber('/camera/depth/color/points', PointCloud2, callback_roscloud, queue_size=1)  
 
@@ -686,9 +686,10 @@ if __name__ == "__main__":
 
     tube = [-1.1437214056598108, -1.3365314642535608, -1.840600315724508, 0.20955729484558105, 1.1416419744491577, -1.66575795808901]
     intersect = [-1.7001226584063929, -1.2195118109332483, -1.8784139792071741, -0.799168888722555, 1.625313401222229, -1.5555179754840296]
-    startj = intersect
+    cube_intersect = [-1.975440804158346, -1.4402702490436, -1.8757017294513147, -0.4285944143878382, 1.8892546892166138, -1.6770418326007288]
+    startj = cube_intersect
     execution = True
-    max_dis = 0.32
+    max_dis = 0.35
     mutilayer_exe = False
     total_time = []
 

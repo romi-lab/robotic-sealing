@@ -400,6 +400,11 @@ def transform_cam_wrt_base(pcd, T_end_effector_wrt_base):
                                         [ 0.08173799, -0.2337146 ,  0.96886345 , 0.1156235],
                                         [ 0.      ,    0.         , 0.      ,    1.        ]])
 
+    T_cam_wrt_end_effector = np.array( [[-0.02160632 ,-0.97207334 ,-0.23368052,  0.122350972619],
+                                    [ 0.98357004,  0.02123446, -0.17927374, -0.08164344],
+                                    [ 0.17922931 ,-0.2337146   ,0.95564342 ,  0.1156235],
+                                    [ 0.         , 0.      ,    0.         ,1.        ]])
+
     pcd_copy1 = copy.deepcopy(pcd).transform(T_cam_wrt_end_effector)
     pcd_copy1.paint_uniform_color([0.5, 0.5, 1])
 

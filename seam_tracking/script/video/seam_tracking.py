@@ -77,9 +77,7 @@ class motion_controller:
             self.start.z = 0
             self.pub_start_process.publish(self.start)
 
-            vel_scale = 0.015
-
-            # new_vel_vec = vel_scale* new_vel_vec
+            vel_scale = 0.01
 
             translation_speed = vel_scale*0.5
 
@@ -129,21 +127,21 @@ class motion_controller:
                         logi_y_diff = logi_pre[-1]
                         angle_diff = logi_pre[0]
                         y_scale = vel_scale*0.5
-                        a_scale = vel_scale*0.8
+                        a_scale = vel_scale*2
 
                         if abs(logi_y_diff) > 2:
                             # print rs_y_diff
-                            dx = (logi_y_diff)*y_scale
+                            dx = (logi_y_diff)*y_scale*0.8
                             # if logi_y_diff > 0:
                             #     dy = -(logi_y_diff-0.5)*y_scale
                             # else:
                             #     dy = -(logi_y_diff+0.5)*y_scale
                         elif abs(logi_y_diff) > 1 :
-                            dx = (logi_y_diff)*y_scale*0.4
+                            dx = (logi_y_diff)*y_scale*0.3
                         elif abs(logi_y_diff) > 0.5 :
-                            dx = (logi_y_diff)*y_scale*0.2
-                        elif abs(logi_y_diff) > 0.2 :
                             dx = (logi_y_diff)*y_scale*0.1
+                        elif abs(logi_y_diff) > 0.2 :
+                            dx = (logi_y_diff)*y_scale*0.05
                         else:
                             dx = 0
                             print "all well"
@@ -154,15 +152,18 @@ class motion_controller:
                             else:
                                 dx=-vel_scale*0.5
 
-                        if abs(angle_diff) > 1:
-
-                            drz = a_scale*angle_diff
+                        if abs(angle_diff) > 5:
+                            drz = (angle_diff)*a_scale
+                        elif abs(angle_diff) > 2 :
+                            drz = (angle_diff)*a_scale*0.4
+                        elif abs(angle_diff) > 0.5:
+                            drz = (angle_diff)*a_scale*0.1
                         
-                        if abs(drz) > a_scale*20:
+                        if abs(drz) > a_scale*4:
                             if drz>0:
-                                drz= a_scale*20
+                                drz= a_scale*4
                             else:
-                                drz= -a_scale*20
+                                drz= -a_scale*4
                         
                         print "moving at z = "+str(drz)
                         
@@ -172,17 +173,41 @@ class motion_controller:
                     end = time.time()
                     print int(end-start) 
 
-                    if end-start > total_time:
+                    residual = total_time*0.9-(end-start)
+
+                    print residual
+
+                    
+
+                    if residual <= 0:
+                        print("break")
+                        break
+                    elif 0 < residual <= 2:
                         self.start = Point()
                         self.start.x = -1
                         self.start.y = 0
                         self.start.z = 0
-                        self.pub_start_process.publish(self.start)
-                        rob.set_digital_out(0,False)
-                        # raw_input("Press any to continue")
-                        rob.translate_tool((0, 0, -0.08), vel=0.1, acc=0.1, wait=True)
-                        rob.stop()
-                        break
+                        self.pub_start_process.publish(self.start)   
+                        print("publish end")
+                    elif 2 < residual <= 3.5:
+                        self.start = Point()
+                        self.start.x = 0
+                        self.start.y = 1
+                        self.start.z = 0
+                        self.pub_start_process.publish(self.start)  
+                    
+
+                self.start = Point()
+                self.start.x = -1
+                self.start.y = 0
+                self.start.z = 0
+                self.pub_start_process.publish(self.start)
+                rob.stop()
+                rob.set_digital_out(0,False)
+                # raw_input("Press any to continue")
+                rob.translate_tool((0, 0, -0.08), vel=0.1, acc=0.1, wait=True)
+                rob.stop()
+                        
 
             if usr_input == 'q':
                 rob.translate_tool((0, 0, -0.08), vel=0.1, acc=0.1, wait=True)
