@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <!-- kinect --> 
+  <include file="$(find kinect2_bridge)/launch/kinect2_bridge.launch">
+    <arg name="base_name"         default="kinect2"/>
+    <arg name="publish_tf"        default="true"/>
+    <arg name="use_png"           default="false"/>
+    <arg name="jpeg_quality"      default="90"/>
+    <arg name="png_level"         default="1"/>
+    <arg name="depth_method"      default="default"/>
+    <arg name="depth_device"      default="-1"/>
+    <arg name="bilateral_filter"  default="true"/>
+  </include>
+
+</launch>

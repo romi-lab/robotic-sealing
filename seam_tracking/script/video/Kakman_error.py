@@ -41,21 +41,16 @@ class image_converter:
 
     def callback_start_process(self, Point):
 
-        global reach_first_pose, left_rectangle_height
+        global reach_first_pose
 
         if Point.x == 1:
 
             reach_first_pose = True
-            left_rectangle_height = 60
         
         elif Point.x == -1:
 
             reach_first_pose = False
-            left_rectangle_height = 60
 
-        elif Point.x == 0 and Point.y == 1:
-
-            left_rectangle_height = 20
 
     def callback_logi_image(self, Image):
 
@@ -102,8 +97,8 @@ class image_converter:
 
             limg = copy.deepcopy(frame)
 
-            tip_width = int(width*80/160)
-            tip_height = int(20/64*height) #240
+            tip_width = int(width*75/160)
+            tip_height = int(19/64*height) #240
             tip_pos = np.array([tip_width, tip_height])
 
             # cv2.line(frame, (tip_width, 0), (tip_width, int(height)), (0, 0, 0))
@@ -134,11 +129,12 @@ class image_converter:
             
             cv2.waitKey(1)
         
-        if reach_first_pose:
-            image_processor(opencv_image)
-        else:
-            self.image_pub.publish(Image)
-        # image_processor(opencv_image)
+
+        # if reach_first_pose:
+        #     image_processor(opencv_image)
+        # else:
+        #     self.image_pub.publish(Image)
+        image_processor(opencv_image)
 
 
 def process_pre_roi(limg, tip_pos):
@@ -156,15 +152,16 @@ def process_pre_roi(limg, tip_pos):
         (line equation: y = kx + b w.r.t original frame)
     """
     
-    global frame, k_list, b_list, count_nan, noedge, preroi_offset, point_list, left_rectangle_height
+    global frame, k_list, b_list, count_nan, noedge, preroi_offset, point_list
 
     # 1. define left roi
     tip_width = tip_pos[0]
     tip_height = tip_pos[1]
     left_rectangle_center = np.array([tip_width, tip_height+100])
     # left_rectangle_height = 60
+    left_rectangle_height = 60
     left_rectangle_width = 200
-    # cv2.rectangle(frame,(left_rectangle_center[0]- left_rectangle_width,left_rectangle_center[1]- left_rectangle_height),(left_rectangle_center[0]+ left_rectangle_width,left_rectangle_center[1]+ left_rectangle_height),(255,255,255),1)
+    cv2.rectangle(frame,(left_rectangle_center[0]- left_rectangle_width,left_rectangle_center[1]- left_rectangle_height),(left_rectangle_center[0]+ left_rectangle_width,left_rectangle_center[1]+ left_rectangle_height),(255,255,255),1)
 
     # 2. process left image
     # 2a. define left ROI
@@ -236,7 +233,7 @@ def process_pre_roi(limg, tip_pos):
 
         # cv2.line(frame,(a2,b2),(a1,b1),(0,0,0),4)
 
-        left_offset = 73
+        left_offset = 70
         
         center_point_up_y = yl1
         center_point_dn_y = yl2
@@ -262,6 +259,7 @@ def process_pre_roi(limg, tip_pos):
         cv2.line(frame,(left_point_up_x,left_point_up_y),(right_point_up_x,right_point_up_y),(255,255,255),4)
 
         projection = ClosestPointOnLine(p2, p1, tip_pos)
+        # error = np.linalg.norm(projection-p2)
 
         error = center_point_up_x - projection[0]
 
@@ -273,7 +271,7 @@ def process_pre_roi(limg, tip_pos):
     
         scale = 0.129
         error = scale*error
-        error_text = "error: " + str(round(abs(error),2)) + " mm"
+        error_text = "error: " + str(round(abs(error),3)) + " mm"
 
         font = cv2.FONT_HERSHEY_SIMPLEX
         font_size = 1
@@ -522,15 +520,7 @@ def preroi_point_filter():
         new_a1 = np.average(np.array(point_list)[-n:,0], weights=k_weights)
         new_a2 = np.average(np.array(point_list)[-n:,1], weights=k_weights)
         # print new_k, new_b
-        if abs(new_a1-a1)>50 or abs(new_a2-a2)>50:
-            if diff_count < 4:
-                print("line change dtected")
-                point_list[-1][0] = point_list[-2][0]
-                point_list[-1][1] = point_list[-2][1]
-                a1 = point_list[-1][0]
-                a2 = point_list[-1][1]
-                diff_count = diff_count + 1
-        if abs(new_a1-a1)>10 or abs(new_a2-a2)>10:
+        if abs(new_a1-a1)>5 or abs(new_a2-a2)>5:
             if diff_count < 1:
                 print("line change dtected")
                 point_list[-1][0] = point_list[-2][0]
@@ -581,7 +571,7 @@ def display_info_on_image(tip_height):
 def main(args):
 
     rospy.init_node('logi_img_processing', anonymous=True)
-    global count_nan, noedge, preroi_offset, postroi_offset, reach_first_pose, diff_count, point_list, filter_point_list, k_list, b_list, left_rectangle_height
+    global count_nan, noedge, preroi_offset, postroi_offset, reach_first_pose, diff_count, point_list, filter_point_list, k_list, b_list
 
     # window offset
     k_list = []
@@ -592,7 +582,6 @@ def main(args):
     count_nan = 0
     noedge = True
     reach_first_pose = False
-    left_rectangle_height = 60
 
     ic = image_converter()
 

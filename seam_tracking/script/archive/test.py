@@ -42,6 +42,11 @@ def main(args):
 #     # print("Transformation from base to tcp is: ", t)
     count = 0
 
+    # p2 = [-1.2272198835956019, -1.7004426161395472, -1.6823189894305628, -1.2730239073382776, 1.507084846496582, -1.12502366701235]
+    # # rob.movej(p2, acc=0.1, vel=0.2, wait=True)
+    # initl = rob.getl() #result in radius
+    # print("Initial joint configuration is ", initl)
+
     # while count < 50:
 
     #     p1 = [-1.2291749159442347, -1.6868732611285608, -1.5637076536761683, -1.4049976507769983, 1.506557583808899, -1.1270230452166956]
@@ -59,7 +64,7 @@ def main(args):
     #     count = count + 1
     #     print count
 
-#     print("stop robot")
+    print("stop robot")
     rob.stop()
 
 #     # --- In the end remember to close all cv windows
