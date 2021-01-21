@@ -852,10 +852,6 @@ if __name__ == "__main__":
                 T_end_effector_wrt_base = robot.get_pose()
                 markerArray = MarkerArray()
                 PoseList_tip_rviz = PoseArray()
-<<<<<<< HEAD
-=======
-
->>>>>>> d45f3ca97f89e4410373dfdd8bc31817a447fa52
                 ur_poses = detect_groove_withTemp(received_open3d_cloud, T_end_effector_wrt_base.array, detect_feature="asymmetry", show_groove=False)
                 
                 rospy.loginfo("-- Finish display. ...\n")
