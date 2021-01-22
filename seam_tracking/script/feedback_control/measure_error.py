@@ -73,7 +73,7 @@ class image_converter:
                 text = 'Error: '+ str(round(error,2)) +'mm'
                 if error > 1:
                     text_color =  ColorRGBA(1.0, 0, 0, 1.0)
-                if error > 0.5:
+                elif error > 0.5:
                     text_color =  ColorRGBA(1.0, 1.0, 0, 1.0)
             else:
                 text = 'Error: not avaliable yet'
@@ -510,7 +510,7 @@ def preroi_point_filter():
     new_a1 = a1
     new_a2 = a2
 
-    # how close is this new measures to the previous one
+    # how many frames to average
     n = 6
     # how much the original data should be "corrected"q
     alpha = 0.1
