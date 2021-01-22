@@ -57,22 +57,22 @@ A rough description of useful packages is listed here:
 Folder | package | Description
 ------------ | ------------- | -------------
 **robotic_sealing** | seam_tracking | The main program, includes seam detection and visual feedback based seam tracking. Refer to **3. Robotic sealing** for detail
-| sealing_robot_description | The model for robotic sealing (used in rviz)
-| robotic-welding-hri | HRI control of UR using Leap Motion
+&nbsp;| sealing_robot_description | The model for robotic sealing (used in rviz)
+&nbsp;| robotic-welding-hri | HRI control of UR using Leap Motion
 **ur_driver** | Universal_Robots_ROS_Driver | driver for UR
- |fmauch_universal_robot | provide model of UR and moveit control of UR
+&nbsp; |fmauch_universal_robot | provide model of UR and moveit control of UR
 rviz_config | | store configuration files for visualization in rviz
 tool | StructureSDK | SDK for Structure core with ROS driver
- | iai_kinect | ROS driver for kinect v2    
- |ar_track_alvar | detect AR marker (normally used for calibration)
- | average_tf | average poses of four AR marker to get a more accurate pose (written by Muddassir)
- | easy_handeye | Hand-eye calibration
- |ros_record_rgbd_images| record rgbd image and point cloud of camera
- |markers| markers for calibration (AR and chess board)
+&nbsp; | iai_kinect | ROS driver for kinect v2    
+&nbsp; |ar_track_alvar | detect AR marker (normally used for calibration)
+&nbsp; | average_tf | average poses of four AR marker to get a more accurate pose (written by Muddassir)
+&nbsp; | easy_handeye | Hand-eye calibration
+&nbsp; |ros_record_rgbd_images| record rgbd image and point cloud of camera
+&nbsp; |markers| markers for calibration (AR and chess board)
 testing | ur_tests | test UR
-| moveit_tutorials | test & learn Moveit
-| panda_moveit_config | test & learn Moveit
-| edge_detection_packages | some trail packages to test edge detection function
+&nbsp;| moveit_tutorials | test & learn Moveit
+&nbsp;| panda_moveit_config | test & learn Moveit
+&nbsp;| edge_detection_packages | some trail packages to test edge detection function
 Kalman and Bayesian Filters in Python |  | learn Kalman filter, cloned from [here](https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python)
 
 # 2. Setup
@@ -239,16 +239,16 @@ Under ```seam_tracking```, the programs are organised as so:
 Folder | Program | Description
 ------------ | ------------- | -------------
 seam_detection | seam_detection_line.py | Seam detection, path planning and execution for line shape groove (Plane, horizonal, vertical, beam, cube) ([Demo](https://youtu.be/HzMZ8QXGl44))
-|seam_detection_others.py | Seam detection, path planning and execution for non-line type of groove (tube)
-|seam_detection_rest.py | Seam detection, path planning and execution for non-line type of groove (tube & cube intersection)
+&nbsp;|seam_detection_others.py | Seam detection, path planning and execution for non-line type of groove (tube)
+&nbsp;|seam_detection_rest.py | Seam detection, path planning and execution for non-line type of groove (tube & cube intersection)
 feedback_control | find_seam.py | seam_detection and path planning, the code highly resembles ```seam_detection/seam_detection_line.py```, **the different is that this file doesn't execute the path, it passed the path to ```feedback_control/seam_tracking.py``` for feedback motion control**
-| measure_error.py | the new way to measured the error, check result [here](https://youtu.be/ZCArchHNFno)
-| seam_tracking.py | feedback motion control based on result from ```feedback_control/measure_error.py``` and ```feedback_control/find_seam.py```
+&nbsp;| measure_error.py | the new way to measured the error, check result [here](https://youtu.be/ZCArchHNFno)
+&nbsp;| seam_tracking.py | feedback motion control based on result from ```feedback_control/measure_error.py``` and ```feedback_control/find_seam.py```
 image_processing | logi_img_processing.py | the old way of image processing using logi camera, the result can be found [here](https://youtu.be/ECuXRa2A77M) (upper left image)
-| rs_rgb_processing.py| the old way of image processing using realsense rgb camera, the result can be found [here](https://youtu.be/ECuXRa2A77M) (lower right image)
+&nbsp;| rs_rgb_processing.py| the old way of image processing using realsense rgb camera, the result can be found [here](https://youtu.be/ECuXRa2A77M) (lower right image)
 old_feedback_control | demo_detection.py | seam detection and path planning, this file doesn't execute the path either (similar to find_seam.py), it passed the path to ```feedback_control/new_rgb_cam_control.py``` for feedback motion control (check demo [here](https://youtu.be/LGgVzwvURLI))
-| demo_motion_control.py | feedback control based on the old way of image processing using both cameras ( ```image_processing/rs_rgb_processing.py``` and ```image_processing/logi_img_processing.py```) (check demo [here](https://youtu.be/LGgVzwvURLI))
-others |  | for store & match template used in ```seam_detection_rest.py```
+&nbsp;| demo_motion_control.py | feedback control based on the old way of image processing using both cameras ( ```image_processing/rs_rgb_processing.py``` and ```image_processing/logi_img_processing.py```) (check demo [here](https://youtu.be/LGgVzwvURLI))
+others | &nbsp; | for store & match template used in ```seam_detection_rest.py```
 
 To run the codes:
 
