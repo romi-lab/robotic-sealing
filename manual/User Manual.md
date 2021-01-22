@@ -6,7 +6,37 @@ Written by Maggie Xu 22 Jan 2020
 This docuamnetation records all the relatred programs on this computer,
 their fucntionality, command , explaination, etc. Related settings such as calibration and visualization are also included.
 
-# Table of content
+## Table of content
+
+- [1. Overview](#1-overview)
+- [2. Setup](#2-setup)
+  * [2.1 Setup UR robot](#21-setup-ur-robot)
+  * [2.2 Calibration](#22-calibration)
+    + [2.2.1 Camera Calibration](#221-camera-calibration)
+      - [1.Realsense RGB-D](#1realsense-rgb-d)
+      - [2.Web cam (logi C525)](#2web-cam--logi-c525-)
+    + [2.2.2 Eye-hand calibration](#222-eye-hand-calibration)
+    + [2.2.3 Tool calibration](#223-tool-calibration)
+  * [2.3 Construct model for visualization](#23-construct-model-for-visualization)
+    + [2.3.1 Desing of mounting (Solidworks to stl)](#231-desing-of-mounting--solidworks-to-stl-)
+    + [2.3.2 Constrcut model in rviz (stl to urdf)](#232-constrcut-model-in-rviz--stl-to-urdf-)
+  * [2.4 Setup sealing system](#24-setup-sealing-system)
+- [3.Robotic sealing](#3robotic-sealing)
+    + [3.1 Explaination of important parameters in the code](#31-explaination-of-important-parameters-in-the-code)
+      - [1.seam_detection_line.py](#1seam-detection-linepy)
+      - [2.measure_error.py](#2measure-errorpy)
+      - [3.seam_tracking.py](#3seam-trackingpy)
+    + [3.2 Revert to robotic welding](#32-revert-to-robotic-welding)
+- [4. Other functions](#4-other-functions)
+    + [1. Record rgb & depth image and point cloud](#1-record-rgb---depth-image-and-point-cloud)
+    + [2. Open Kinect camera in ROS](#2-open-kinect-camera-in-ros)
+    + [3. Record current pose of UR](#3-record-current-pose-of-ur)
+    + [Other tools](#other-tools)
+- [5.Documents in this project](#5documents-in-this-project)
+  * [1.CNERC](#1cnerc)
+  * [2.Project Docs](#2project-docs)
+- [6.Note](#6note)
+  * [Summary of some command](#summary-of-some-command)
 
 
 # 1. Overview
