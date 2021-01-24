@@ -1,11 +1,12 @@
 # Robotic sealing
-This program is developed for visual based feedback control on robotic sealing. It partially adopted our previous work on robotic welding and explainations can be found [here](https://github.com/romi-lab/robotic-sealing)
+This program is developed for visual based feedback control on robotic sealing. It partially adopted our previous work on [robotic welding ](https://github.com/romi-lab/robotic-sealing)
 
 ## result
 ### Robotic Sealing
+<img src="https://github.com/romi-lab/robotic-sealing/blob/main/manual/videos/sealing.gif" alt="">
 
 ### Feedback control
-
+<img src="https://github.com/romi-lab/robotic-sealing/blob/main/manual/videos/feedback.gif" alt="">
 
 More related project videos can be found on [youtube](https://youtube.com/playlist?list=PL5FErTrn43DDHdJKLiQ1JPjlA0XReVGos)
 
@@ -20,8 +21,12 @@ robotic-welding-hri |  HRI control of UR using Leap Motion
 ## 1.robotic-welding-hri
 Gestured based interaction for guiding. For detail , please go to [here](https://github.com/aliadnani/robotic-welding-hri)
 
+<img src="https://github.com/romi-lab/robotic-sealing/blob/main/manual/videos/hri.gif" alt="">
+
 ## 2.sealing_robot_description
 The mounting in CAD (Solidworks) avaliable at [GrabCAD](https://grabcad.com/library/robotic-sealing-mounting-config-1)
+
+<img src="https://github.com/romi-lab/robotic-sealing/blob/main/manual/videos/designCAD.png" width="420" alt=""> <img src="https://github.com/romi-lab/robotic-sealing/blob/main/manual/videos/mounting_3d_printing.jpeg" width="380" alt="">
 
 ## 3.seam_tracking
 
