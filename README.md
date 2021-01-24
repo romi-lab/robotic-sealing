@@ -1,16 +1,26 @@
 # Robotic sealing
 This program is developed for visual based feedback control on robotic sealing. It partially adopted our previous work on [robotic welding ](https://github.com/romi-lab/robotic-sealing)
 
-## result
-### Robotic Sealing
+## Robotic Sealing
 <img src="https://github.com/romi-lab/robotic-sealing/blob/main/manual/videos/sealing.gif" alt="">
 
-### Feedback control
+## Feedback control
 <img src="https://github.com/romi-lab/robotic-sealing/blob/main/manual/videos/feedback.gif" alt="">
 
 More related project videos can be found on [youtube](https://youtube.com/playlist?list=PL5FErTrn43DDHdJKLiQ1JPjlA0XReVGos)
 
-## overview
+## Table of content
+- [overview](#overview)
+  * [1.robotic-welding-hri](#1robotic-welding-hri)
+  * [2.sealing_robot_description](#2sealing-robot-description)
+  * [3.seam_tracking](#3seam-tracking)
+    + [3.1 Explaination of important parameters in the code](#31-explaination-of-important-parameters-in-the-code)
+      - [1.seam_detection_line.py](#1seam-detection-linepy)
+      - [2.measure_error.py](#2measure-errorpy)
+      - [3.seam_tracking.py](#3seam-trackingpy)
+- [Note](#note)
+
+# overview
 
 Package | Description
 ------------ | -------------
@@ -124,5 +134,5 @@ Parameter | Location | Description
 vel_scale | line 80 | velocity of the overall system to move along the seam, also used for feedback control
 residual | line 182 | the threshold for residul indicates when the robot stop working and when it approaches to the end
 
-## Note
+# Note
 Detail on the development of this program, please refer to the [manual](https://github.com/romi-lab/robotic-sealing/blob/main/manual/User%20Manual.md).
