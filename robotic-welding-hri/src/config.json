@@ -1,0 +1,17 @@
+{
+    "prev_follow_hand_mode": "scanning", 
+    "verbose": true, 
+    "moving_average_filter": true, 
+    "follow_hand_mode": "off", 
+    "written_to_excel": true, 
+    "speeds": {
+        "2dof": {
+            "acc": 0.04, 
+            "vel": 0.04
+        }, 
+        "positioning": {
+            "acc": 0.04, 
+            "vel": 0.04
+        }
+    }
+}

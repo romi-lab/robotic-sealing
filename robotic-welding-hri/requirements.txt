@@ -1,0 +1,4 @@
+math3d==3.3.5
+matplotlib==2.2.3
+numpy==1.16.5
+scipy==1.2.3
