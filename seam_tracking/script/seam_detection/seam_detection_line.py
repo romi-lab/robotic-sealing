@@ -414,10 +414,10 @@ def callback_roscloud(ros_cloud):
 def transform_cam_wrt_base(pcd, T_end_effector_wrt_base):
 
 
-    T_cam_wrt_end_effector = np.array(  [[-0.01752474 ,-0.97207334, -0.23402201, 0.122350972619],
-                                        [ 0.986549  ,  0.02123446 ,-0.16208077, -0.08164344],
-                                        [ 0.16252373 ,-0.2337146 ,  0.95862585 ,  0.1156235],
-                                        [ 0.          ,0.       ,   0.          ,1.        ]])
+    # T_cam_wrt_end_effector = np.array(  [[-0.01752474 ,-0.97207334, -0.23402201, 0.122350972619],
+    #                                     [ 0.986549  ,  0.02123446 ,-0.16208077, -0.08164344],
+    #                                     [ 0.16252373 ,-0.2337146 ,  0.95862585 ,  0.1156235],
+    #                                     [ 0.          ,0.       ,   0.          ,1.        ]])
 
 
 
@@ -946,7 +946,8 @@ if __name__ == "__main__":
     max_dis = 0.7
     mutilayer_exe = False
     total_time = []
-    sealing = False
+    sealing = True
+    # sealing = False   
 
     while not rospy.is_shutdown():
         

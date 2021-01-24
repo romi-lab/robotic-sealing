@@ -209,7 +209,7 @@ robot = urx.Robot("192.168.0.2")
 # Open
 robot.set_digital_out(0,True)
 # Close
-robot.set_digital_out(0,True)
+robot.set_digital_out(0,False)
 ```
 The mounting stl file is placed at ```/home/maggie/ros/robotic_sealing/src/sealing_robot_description/robot_scene_description/meshes/collision/sealing_mounting.STL``` (refer to 2.3 Construct model for visualization for detail)
 
@@ -372,6 +372,19 @@ roslaunch seam_tracking kinect.launch
 ```
 # to get the correct pose, set the tcp correctly
 python /home/maggie/ros/testing/src/ur_tests/record_ur_pose.py
+```
+
+### 3. View transformation relation
+```
+rosrun tf view_frames
+
+# rosrun tf tf_echo [reference_frame] [target_frame]
+rosrun tf tf_echo camera_color_optical_frame camera_depth_optical_frame
+```
+
+### 4. Change transformation
+```
+python /home/maggie/ros/tool/src/easy_handeye/easy_handeye/scripts/calculate_tansformation.py
 ```
 
 ### Other tools
