@@ -406,6 +406,7 @@ Kazam | Screen record
 Openshot | video editor
 cheese | open camera and capture
 Solidworks 2016 (in Windows) | CAD drawing
+ffmpeg | video to gif (command: ffmpeg -i your_video.mp4 output.gif)
 
 # 5.Documents in this project
 ## 1.CNERC
