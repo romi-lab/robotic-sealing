@@ -14,4 +14,6 @@
     <arg name="bilateral_filter"  default="true"/>
   </include>
 
+  <node type="rviz" name="rviz" pkg="rviz" args="-d /home/maggie/ros/rviz_config/kinect.rviz" />
+
 </launch>

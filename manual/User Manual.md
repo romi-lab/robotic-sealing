@@ -178,7 +178,7 @@ robot_scene_description | integration of all model and add mounting stl
 
 ### 2.3.1 Desing of mounting (Solidworks to stl)
 The  mounting is drawn in Solidworks 2016 in Window and export as stl
-The drawing file can be found [here](https://grabcad.com/library/robotic-sealing-mounting-config-1)
+The drawing file can be found at [GrabCAD](https://grabcad.com/library/robotic-sealing-mounting-config-1)
 
 ### 2.3.2 Constrcut model in rviz (stl to urdf)
 After getting the stl, put it under folder ```robot_scene_description/meshes/collision```  
@@ -232,7 +232,7 @@ Package | Description
 ------------ | -------------
 seam_tracking | main program
 sealing_robot_description | refer to **2.3 Construct model for visualization**
-robotic-welding-hri |  HRI control of UR using Leap Motion (developed by Ali) check [Demo](https://youtu.be/xw_W_4LYhmI)
+robotic-welding-hri |  HRI control of UR using Leap Motion (developed by Ali) check [Demo](https://youtu.be/xw_W_4LYhmI) and [code](https://github.com/aliadnani/robotic-welding-hri)
 
 Under ```seam_tracking```, the programs are organised as so:
 
