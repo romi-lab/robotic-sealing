@@ -1,5 +1,5 @@
 # Robotic sealing
-This program is developed for visual based feedback control on robotic sealing. It partially adopted our previous work on [robotic welding ](https://github.com/romi-lab/robotic-sealing)
+This program is developed for visual based feedback control on robotic sealing. It partially adopted our previous work on [robotic welding ](https://github.com/romi-lab/robotic-welding-demo)
 
 ## Robotic Sealing
 <img src="https://github.com/romi-lab/robotic-sealing/blob/main/manual/videos/sealing.gif" alt="">
