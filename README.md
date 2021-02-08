@@ -7,7 +7,7 @@ This program is developed for visual based feedback control on robotic sealing. 
 ## Feedback control
 <img src="https://github.com/romi-lab/robotic-sealing/blob/main/manual/videos/feedback.gif" alt="">
 
-More related project videos can be found on [youtube](https://youtube.com/playlist?list=PL5FErTrn43DDHdJKLiQ1JPjlA0XReVGos)
+More related project videos can be found on [youtube](https://youtube.com/playlist?list=PL5FErTrn43DDHdJKLiQ1JPjlA0XReVGos) or [bilibili](https://www.bilibili.com/medialist/detail/ml1186419135?type=1)
 
 ## Table of content
 - [overview](#overview)
