@@ -262,7 +262,7 @@ cd /home/maggie/ros/robotic_sealing/src/seam_tracking/script/seam_detection
 python seam_detection_line.py
 # or python seam_detection_others.py depends on the workpiece
 ```
-2.Detection with feedback control ([demo](https://youtu.be/ZCArchHNFno))
+2.Detection with feedback control ([demo](https://youtu.be/ZqpIqyxFfWE))
 ```
 roslaunch ur_robot_driver ur5_bringup.launch robot_ip:=192.168.0.2 kinematics_config:=$(rospack find ur_calibration)/my_robot_calibration.yaml
 roslaunch robot_scene_description robot_scene_description.launch
