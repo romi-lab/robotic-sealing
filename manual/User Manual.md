@@ -238,7 +238,7 @@ Under ```seam_tracking```, the programs are organised as so:
 
 Folder | Program | Description
 ------------ | ------------- | -------------
-seam_detection | seam_detection_line.py | Seam detection, path planning and execution for line shape groove (Plane, horizonal, vertical, beam, cube) ([Demo](https://youtu.be/HzMZ8QXGl44))
+seam_detection | seam_detection_line.py | Seam detection, path planning and execution for line shape groove (Plane, horizonal, vertical, beam, cube) ([Demo](https://youtu.be/0biiZy6aObY))
 &nbsp;|seam_detection_others.py | Seam detection, path planning and execution for non-line type of groove (tube)
 &nbsp;|seam_detection_rest.py | Seam detection, path planning and execution for non-line type of groove (tube & cube intersection)
 feedback_control | find_seam.py | seam_detection and path planning, the code highly resembles ```seam_detection/seam_detection_line.py```, **the different is that this file doesn't execute the path, it passed the path to ```feedback_control/seam_tracking.py``` for feedback motion control**
@@ -252,7 +252,7 @@ others | &nbsp; | for store & match template used in ```seam_detection_rest.py``
 
 To run the codes:
 
-1.Detection ([demo](https://youtu.be/HzMZ8QXGl44)):
+1.Detection ([demo](https://youtu.be/0biiZy6aObY)):
 ```
 roslaunch ur_robot_driver ur5_bringup.launch robot_ip:=192.168.0.2 kinematics_config:=$(rospack find ur_calibration)/my_robot_calibration.yaml
 roslaunch robot_scene_description robot_scene_description.launch
