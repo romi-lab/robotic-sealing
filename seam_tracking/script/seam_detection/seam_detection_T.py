@@ -744,6 +744,10 @@ def uplift_z(ur_poses):
         new_ur_poses.append(urpose)
     return new_ur_poses
 
+def get3Points():
+
+    pass
+
 def detect_groove_workflow(pcd, transfromation_end_to_base, detect_feature="asymmetry" , show_groove=False, publish=True, save_data=False):
 
      # 2.downsample of point cloud
@@ -775,41 +779,88 @@ def detect_groove_workflow(pcd, transfromation_end_to_base, detect_feature="asym
     pcd.normalize_normals()
     pcd.orient_normals_towards_camera_location(camera_location=[0., 0., 0.])
 
-    # 4.use different geometry features to find groove
-    feautre_value_list = find_feature_value(detect_feature, pcd, voxel_size)
-    normalised_feautre_value_list = normalise_feautre(feautre_value_list)
-    
-    # 5.delete low value points and cluster
-    delete_points = int(pc_number*delete_percentage)
-    pcd_selected = pcd.select_down_sample(np.argsort(normalised_feautre_value_list)[delete_points:])
-    groove = cluster_groove_from_point_cloud(pcd_selected, voxel_size)
+    # # 4.use different geometry features to find groove
+    # feautre_value_list = find_feature_value(detect_feature, pcd, voxel_size)
+    # normalised_feautre_value_list = normalise_feautre(feautre_value_list)
+    #
+    # # 5.delete low value points and cluster
+    # delete_points = int(pc_number*delete_percentage)
+    # pcd_selected = pcd.select_down_sample(np.argsort(normalised_feautre_value_list)[delete_points:])
+    # groove = cluster_groove_from_point_cloud(pcd_selected, voxel_size)
 
     groove_t = time.time()
     rospy.loginfo("Runtime of groove detection is {}".format(groove_t-start))
-    # groove.remove_statistical_outlier(nb_neighbors=20, std_ratio=2.5)
 
-    # index = np.where(np.isin(np.asarray(pcd.points), np.asarray(groove.points))==True)
-    # np.asarray(pcd.colors)[index[0],:] = [1,0,0]
-    # print pcd 
-    # print groove
+    # Start to label the three points
+    pcd.paint_uniform_color([0.8, 0.8, 0.8])
+    vis = o3d.visualization.VisualizerWithEditing()
+    vis.create_window()
+    vis.add_geometry(pcd)
+    vis.run()
+    vis.destroy_window()
+    print(vis.get_picked_points())
+    pick_idx_lst = vis.get_picked_points()
+    print("The indexes of the selected points are: \n {} ".format(pick_idx_lst))
+
+    extend_ratio = 0.11
+    extend_ratio = 0
+    r = voxel_size * 18
+    start_p = np.asarray(pcd.points)[pick_idx_lst[0]]
+    corner_p_true = np.asarray(pcd.points)[pick_idx_lst[1]]
+    end_p = np.asarray(pcd.points)[pick_idx_lst[2]]
+    corner_p = corner_p_true + (corner_p_true - start_p) * extend_ratio
+    ROI_points_lst1 = points_in_cylinder(start_p, corner_p, r, np.asarray(pcd.points))
+    corner_p = corner_p_true + (corner_p_true - end_p) * extend_ratio
+    ROI_points_lst2 = points_in_cylinder(end_p, corner_p, r, np.asarray(pcd.points))
+    ROI_points_lst = np.concatenate((ROI_points_lst1, ROI_points_lst2), axis=0)
+
+    ROI_pcd = o3d.geometry.PointCloud()
+    ROI_pcd.points = o3d.utility.Vector3dVector(ROI_points_lst)
+    ROI_pcd.paint_uniform_color([1, 0.5, .5])
+    pcd.paint_uniform_color([0.8, 0.8, 0.8])
+    o3d.visualization.draw_geometries([pcd, ROI_pcd])
+
+    groove1 = o3d.geometry.PointCloud()
+    groove1.points = o3d.utility.Vector3dVector(ROI_points_lst1)
+    groove2 = o3d.geometry.PointCloud()
+    groove2.points = o3d.utility.Vector3dVector(ROI_points_lst2)
+
     pcd = transform_cam_wrt_base(pcd, transfromation_end_to_base)
-    groove = transform_cam_wrt_base(groove, transfromation_end_to_base)
+    groove1 = transform_cam_wrt_base(groove1, transfromation_end_to_base)
+    groove2 = transform_cam_wrt_base(groove2, transfromation_end_to_base)
 
-    trajectory = generate_trajectory(pcd, groove)
-    normal = find_normal(trajectory, pcd) 
-    points = np.asarray(trajectory.points)
-    point_size_line = points.shape[0]
-    start_point = points[0]
-    end_point = points[point_size_line-1]
+    trajectory1 = generate_trajectory(pcd, groove1)
+    trajectory2 = generate_trajectory(pcd, groove2)
 
-    refined_groove = points_in_cylinder(start_point, end_point, voxel_size*5, np.asarray(groove.points))
-    refined_groove_pcd = o3d.geometry.PointCloud()
-    refined_groove_pcd.points = o3d.utility.Vector3dVector(refined_groove)
-    refined_groove_pcd.remove_statistical_outlier(nb_neighbors=20, std_ratio=2)
-    new_trajectory = generate_new_trajectory(pcd, refined_groove_pcd, normal)
-    ur_poses = find_orientation(new_trajectory, pcd, refined_groove_pcd, normal)
-    groove = refined_groove_pcd
-    # ur_poses = find_orientation(trajectory, pcd, groove, normal)
+    normal1 = find_normal(trajectory1, pcd)
+    normal2 = find_normal(trajectory2, pcd)
+
+    points1 = np.asarray(trajectory1.points)
+    point_size_line1 = points1.shape[0]
+    start_point1 = points1[0]
+    end_point1 = points1[point_size_line1-1]
+
+    points2 = np.asarray(trajectory2.points)
+    point_size_line2 = points2.shape[0]
+    start_point2 = points2[0]
+    end_point2 = points2[point_size_line2 - 1]
+
+    refined_groove1 = points_in_cylinder(start_point1, end_point1, voxel_size*5, np.asarray(groove1.points))
+    refined_groove_pcd1 = o3d.geometry.PointCloud()
+    refined_groove_pcd1.points = o3d.utility.Vector3dVector(refined_groove1)
+    refined_groove_pcd1.remove_statistical_outlier(nb_neighbors=20, std_ratio=2)
+    new_trajectory1 = generate_new_trajectory(pcd, refined_groove_pcd1, normal1)
+    ur_poses1 = find_orientation(new_trajectory1, pcd, refined_groove_pcd1, normal1)
+    groove1 = refined_groove_pcd1
+
+    refined_groove2 = points_in_cylinder(start_point2, end_point2, voxel_size * 5, np.asarray(groove2.points))
+    refined_groove_pcd2 = o3d.geometry.PointCloud()
+    refined_groove_pcd2.points = o3d.utility.Vector3dVector(refined_groove2)
+    refined_groove_pcd2.remove_statistical_outlier(nb_neighbors=20, std_ratio=2)
+    new_trajectory2 = generate_new_trajectory(pcd, refined_groove_pcd2, normal2)
+    ur_poses2 = find_orientation(new_trajectory2, pcd, refined_groove_pcd2, normal2)
+    groove2 = refined_groove_pcd2
+
 
     traj_t = time.time()
     rospy.loginfo("Runtime of trajectory is {}".format(traj_t-groove_t))
@@ -821,31 +872,36 @@ def detect_groove_workflow(pcd, transfromation_end_to_base, detect_feature="asym
         rviz_cloud = convertCloudFromOpen3dToRos(pcd, frame_id="base")
         pub_pc.publish(rviz_cloud)
 
-        groove.paint_uniform_color([1, 0, 0])
-        rviz_groove = convertCloudFromOpen3dToRos(groove, frame_id="base")
-        pub_groove.publish(rviz_groove)
+        groove1.paint_uniform_color([1, 0, 0])
+        rviz_groove1 = convertCloudFromOpen3dToRos(groove1, frame_id="base")
+        pub_groove.publish(rviz_groove1)
 
-        trajectory.paint_uniform_color([0, 1, 0])
-        rviz_trajectory = convertCloudFromOpen3dToRos(trajectory, frame_id="base")
-        pub_trajectory.publish(rviz_trajectory)
+        groove2.paint_uniform_color([0, 0, 1])
+        rviz_groove2 = convertCloudFromOpen3dToRos(groove2, frame_id="base")
+        pub_groove.publish(rviz_groove2)
+
+        trajectory1.paint_uniform_color([0, 1, 0])
+        rviz_trajectory1 = convertCloudFromOpen3dToRos(trajectory1, frame_id="base")
+        pub_trajectory.publish(rviz_trajectory1)
+
+        trajectory2.paint_uniform_color([0, 1, 0])
+        rviz_trajectory2 = convertCloudFromOpen3dToRos(trajectory2, frame_id="base")
+        pub_trajectory.publish(rviz_trajectory2)
 
         rospy.loginfo("Conversion and publish success ...\n")
         # rospy.sleep(1)
 
     if show_groove:
-        o3d.visualization.draw_geometries([pcd, groove, trajectory])
+        o3d.visualization.draw_geometries([pcd, groove, trajectory1, trajectory2])
         # o3d.visualization.draw_geometries([pcd])
-
     if save_data:
         save_pcd(original_pcd)
-    
     end = time.time()
     rospy.loginfo("Runtime of process is {}".format(end-start))
     total_time.append(end-start)
     rospy.loginfo("Total process {}".format(np.array(total_time).shape[0]))
     rospy.loginfo("Average Runtime of process is {}".format(np.mean(total_time)))
-
-    return ur_poses
+    return [ur_poses1, ur_poses2]
 
 def rotate_pose_for_sealing(poses):
 
@@ -941,6 +997,8 @@ if __name__ == "__main__":
 
     sealing_two_plane =  [-1.3595932165728968, -1.536405388508932, -1.3151958624469202, -1.7422354857074183, 1.4140154123306274, 0.17579922080039978]
 
+    t_cube = []
+
     startj =  normal_plane
     execution = True
     max_dis = 0.7
@@ -979,13 +1037,14 @@ if __name__ == "__main__":
                     PoseList_tip_rviz = PoseArray()
 
                     ur_poses = detect_groove_workflow(received_open3d_cloud, T_end_effector_wrt_base.array, detect_feature="asymmetry", show_groove=False)
-                    ur_poses = uplift_z(ur_poses)
+                    ur_poses1 = ur_poses[0]
+                    ur_poses1 = uplift_z(ur_poses1)
 
                     if sealing:
-                        ur_poses = rotate_pose_for_sealing(ur_poses)
+                        ur_poses1 = rotate_pose_for_sealing(ur_poses1)
 
-                    publish_trajectory(ur_poses)
-                    trajectory_execution(ur_poses)
+                    publish_trajectory(ur_poses1)
+                    trajectory_execution(ur_poses1)
 
                     if mutilayer_exe:
                         left_poses, right_poses = mutilayer(ur_poses)
